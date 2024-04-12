@@ -62,6 +62,39 @@ namespace POAT
             treeView_in_sc.Nodes.Add(noeud_sn);
         }
 
+        private async void processImage(string Source, string Ground_Truth)
+        {
+            await Task.Run(() =>
+            {
+                // Chargement des images
+                var imageDb = Image.FromFile(Source);
+                var imageGt = Image.FromFile(Ground_Truth);
+
+                Bitmap bmp = new Bitmap(imageDb);
+                Bitmap bmpGt = new Bitmap(imageGt);
+
+                ClImage Img = new ClImage();
+
+                unsafe
+                {
+                    var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    var bmpDataGt = bmpGt.LockBits(new Rectangle(0, 0, bmpGt.Width, bmpGt.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+                    Img.processPtr(2, bmpData.Scan0, bmpDataGt.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
+
+                    bmp.UnlockBits(bmpData);
+                    bmpGt.UnlockBits(bmpDataGt);
+                }
+
+                this.Invoke(new Action(() =>
+                {
+                    iou_label.Text = "Iou (%) : " + Img.objetLibValeurChamp(0).ToString();
+                    vinet_label.Text = "Vinet (%) : " + Img.objetLibValeurChamp(1).ToString();
+                    image_traitée.Image = bmp;
+                }));
+            });
+        }
+
         private void ouvrirDossierToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Choix du dossier contenant les images
@@ -105,37 +138,27 @@ namespace POAT
                 // Construit le chemin complet de l'image dans le dossier Ground truth - png
                 string groundTruthImagePath = Path.Combine(folderBrowserDialog1.SelectedPath, "Ground_truth", imageName + ".bmp");
 
-                // Vérifie si les fichiers existent
-                if (File.Exists(sourceImagePath) && File.Exists(groundTruthImagePath))
-                {
-                    // Charge les images dans les pictureBox correspondantes
-                    image_db.Image = Image.FromFile(sourceImagePath);
-                    image_gt.Image = Image.FromFile(groundTruthImagePath);
-
-                    Bitmap bmp = new Bitmap(image_db.Image);
-                    Bitmap bmp_gt = new Bitmap(image_gt.Image);
-                    ClImage Img = new ClImage();
-
-                    unsafe
-                    {
-                        BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                        BitmapData bmpData_gt = bmp_gt.LockBits(new Rectangle(0, 0, bmp_gt.Width, bmp_gt.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-
-                        Img.processPtr(2, bmpData.Scan0, bmpData_gt.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-                        // 1 champ texte retour C++, le seuil auto
-                        bmp.UnlockBits(bmpData);
-                    }
-
-                    iou_label.Text = "Iou (%) : " + Img.objetLibValeurChamp(0).ToString();
-                    vinet_label.Text = "Vinet (%) : " + Img.objetLibValeurChamp(1).ToString();
-
-                    // transférer C++ vers bmp
-                    image_traitée.Image = bmp;
-                }
-                else
+                if (!File.Exists(sourceImagePath) || !File.Exists(groundTruthImagePath))
                 {
                     MessageBox.Show("Les fichiers d'image correspondants n'existent pas.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
+
+                // Remise à zéro des images
+                image_db.Image = null;
+                image_gt.Image = null;
+                image_traitée.Image = null;
+
+                //remise à zéro des labels
+                iou_label.Text = "Iou (%) : ";
+                vinet_label.Text = "Vinet (%) : ";
+
+                //affiche l'image dans le picturebox
+                image_db.Image = Image.FromFile(sourceImagePath);
+                image_gt.Image = Image.FromFile(groundTruthImagePath);
+
+                // Appel de la méthode processImage
+                processImage(sourceImagePath, groundTruthImagePath);
             }
 
         }

@@ -19,7 +19,6 @@ C:\Devs\Sources\IPSI2\ProjetC++\POAT\bin\Debug\net6.0-windows\POAT.deps.json
 C:\Devs\Sources\IPSI2\ProjetC++\POAT\bin\Debug\net6.0-windows\POAT.runtimeconfig.json
 C:\Devs\Sources\IPSI2\ProjetC++\POAT\bin\Debug\net6.0-windows\POAT.dll
 C:\Devs\Sources\IPSI2\ProjetC++\POAT\bin\Debug\net6.0-windows\POAT.pdb
-C:\Devs\Sources\IPSI2\ProjetC++\POAT\obj\Debug\net6.0-windows\POAT.Form1.resources
 C:\Devs\Sources\IPSI2\ProjetC++\POAT\obj\Debug\net6.0-windows\POAT.csproj.GenerateResource.cache
 C:\Devs\Sources\IPSI2\ProjetC++\POAT\obj\Debug\net6.0-windows\POAT.GeneratedMSBuildEditorConfig.editorconfig
 C:\Devs\Sources\IPSI2\ProjetC++\POAT\obj\Debug\net6.0-windows\POAT.AssemblyInfoInputs.cache
@@ -47,3 +46,4 @@ C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows
 C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows\POAT.pdb
 C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows\POAT.genruntimeconfig.cache
 C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows\ref\POAT.dll
+C:\Devs\Sources\IPSI2\ProjetC++\POAT\obj\Debug\net6.0-windows\POAT.ProjetC.resources

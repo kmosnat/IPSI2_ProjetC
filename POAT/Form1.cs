@@ -15,41 +15,54 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace POAT
 {
-    public partial class Form1 : Form
+    public partial class ProjetC : Form
     {
-        public Form1()
+        public ProjetC()
         {
             InitializeComponent();
         }
+
         private void AjouterNoeudsLnSn()
         {
             TreeNode noeud_ln = new TreeNode("In");
-            TreeNode noeud_sn = new TreeNode("Sn");
+            TreeNode noeud_sn = new TreeNode("Sc");
 
-            for (int i = 0; i < 600; i++)
+            // Trie les clés de ImageList
+            List<string> sortedKeys = In_Sc_list.Images.Keys.Cast<string>()
+                             .Select(key => Path.GetFileNameWithoutExtension(key))
+                             .OrderBy(key => int.Parse(key.Substring(3)))
+                             .ToList();
+
+            // Parcours des clés/Images triées
+            foreach (var imageEntryKey in sortedKeys)
             {
-                TreeNode enfant_ln = new TreeNode
+                if (imageEntryKey.StartsWith("In_"))
                 {
-                    ImageIndex = i,
-                    SelectedImageIndex = i,
-                    Text = "In_" + (i + 1).ToString(),
-                };
-                noeud_ln.Nodes.Add(enfant_ln);
-
-                int a = 300 + i;
-                TreeNode enfant_sn = new TreeNode
+                    TreeNode enfant_ln = new TreeNode
+                    {
+                        ImageIndex = In_Sc_list.Images.Keys.IndexOf(imageEntryKey),
+                        SelectedImageIndex = In_Sc_list.Images.Keys.IndexOf(imageEntryKey),
+                        Text = imageEntryKey
+                    };
+                    noeud_ln.Nodes.Add(enfant_ln);
+                }
+                else if (imageEntryKey.StartsWith("Sc_"))
                 {
-                    ImageIndex = a,
-                    Text = "Sn_" + (i + 1).ToString(),
-                };
-                noeud_sn.Nodes.Add(enfant_sn);
+                    TreeNode enfant_sn = new TreeNode
+                    {
+                        ImageIndex = In_Sc_list.Images.Keys.IndexOf(imageEntryKey),
+                        SelectedImageIndex = In_Sc_list.Images.Keys.IndexOf(imageEntryKey),
+                        Text = imageEntryKey
+                    };
+                    noeud_sn.Nodes.Add(enfant_sn);
+                }
             }
+
             treeView_in_sc.Nodes.Add(noeud_ln);
             treeView_in_sc.Nodes.Add(noeud_sn);
-
         }
 
-        private void bouton_ouvrir_Click(object sender, EventArgs e)
+        private void ouvrirDossierToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Choix du dossier contenant les images
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
@@ -76,7 +89,6 @@ namespace POAT
                     MessageBox.Show("Aucune image trouvée dans le dossier Source Images - bmp.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-
         }
 
         private void treeView_in_sc_AfterSelect(object sender, TreeViewEventArgs e)
@@ -112,16 +124,6 @@ namespace POAT
                     }
 
                     //valeurSeuilAuto.Text = Img.objetLibValeurChamp(0).ToString();
-
-                    image_traitée.Width = bmp.Width;
-                    image_traitée.Height = bmp.Height;
-
-                    // pour centrer image dans panel
-                    if (image_traitée.Width < image_db.Width)
-                        image_traitée.Left = (image_db.Width - image_traitée.Width) / 2;
-
-                    if (image_traitée.Height < image_db.Height)
-                        image_traitée.Top = (image_db.Height - image_traitée.Height) / 2;
 
                     // transférer C++ vers bmp
                     image_traitée.Image = bmp;

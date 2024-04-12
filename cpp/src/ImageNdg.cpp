@@ -1,4 +1,4 @@
-#include <iostream>
+Ôªø#include <iostream>
 #include <fstream>
 #include <string>
 #include <windows.h>
@@ -26,12 +26,12 @@ CImageNdg::CImageNdg(int hauteur, int largeur, int valeur) {
 
 	this->m_iHauteur = hauteur;
 	this->m_iLargeur = largeur;
-	this->m_bBinaire	= false; // Image Ndg par dÈfaut, binaire aprËs seuillage
+	this->m_bBinaire	= false; // Image Ndg par d√©faut, binaire apr√®s seuillage
 	this->m_sNom      = "inconnu";
 
 	this->m_pucPixel = new unsigned char[hauteur*largeur];
 	this->m_pucPalette = new unsigned char[256*4];	
-	choixPalette("grise"); // palette grise par dÈfaut, choix utilisateur 
+	choixPalette("grise"); // palette grise par d√©faut, choix utilisateur 
 	if (valeur != -1) 
 		for (int i=0;i<this->lireNbPixels();i++)
 			this->m_pucPixel[i] = valeur;
@@ -60,7 +60,7 @@ CImageNdg::CImageNdg(const std::string& name) {
 						this->m_pucPalette = new unsigned char[256*4];	
 						this->m_pucPixel = new unsigned char[infoHeader.biHeight * infoHeader.biWidth];
 
-						// gÈrer multiple de 32 bits via zÈros Èventuels ignorÈs
+						// g√©rer multiple de 32 bits via z√©ros √©ventuels ignor√©s
 						int complement = (((this->m_iLargeur-1)/4) + 1)*4 - this->m_iLargeur;
 						for (int indice=0;indice<4*256;indice++) 
 							f.read((char*)&this->m_pucPalette[indice],sizeof(char));
@@ -81,7 +81,7 @@ CImageNdg::CImageNdg(const std::string& name) {
 						this->m_bBinaire = false;
 						this->m_sNom.assign(name.begin(),name.end()-4);
 						this->m_pucPalette = new unsigned char[256*4];	
-						this->choixPalette("grise"); // palette grise par dÈfaut
+						this->choixPalette("grise"); // palette grise par d√©faut
 						this->m_pucPixel = new unsigned char[infoHeader.biHeight * infoHeader.biWidth];
 
 						// extraction plan luminance
@@ -146,7 +146,7 @@ void CImageNdg::sauvegarde(const std::string& fixe) {
 	if (this->m_pucPixel) {
 		std::string nomFichier = "../Res/";
 		if (fixe.compare("") == 0)
-			nomFichier += this->lireNom() + ".bmp"; // force sauvegarde dans rÈpertoire Res (doit exister)
+			nomFichier += this->lireNom() + ".bmp"; // force sauvegarde dans r√©pertoire Res (doit exister)
 		else
 			nomFichier += fixe;
 
@@ -185,7 +185,7 @@ void CImageNdg::sauvegarde(const std::string& fixe) {
 				for (int j=0;j<m_iLargeur;j++)    
 					f.write((char*)&this->m_pucPixel[i*m_iLargeur+j],sizeof(char));
 					
-				// gÈrer multiple de 32 bits
+				// g√©rer multiple de 32 bits
 				char inutile;
 				for (int k=0; k< complement; k++)
 					f.write((char*)&inutile,sizeof(char)); 
@@ -225,7 +225,7 @@ CImageNdg& CImageNdg::operator=(const CImageNdg& im) {
 return *this;
 }
 
-// fonctionnalitÈs histogramme 
+// fonctionnalit√©s histogramme 
 
 std::vector<unsigned long> CImageNdg::histogramme(bool enregistrementCSV, int pas) {
 
@@ -282,7 +282,7 @@ MOMENTS CImageNdg::signatures(const std::vector<unsigned long>& h) {
 	}
 	globales.mediane = i;
 
-	// moyenne et Ècart-type
+	// moyenne et √©cart-type
 	double moy=0,sigma=0;
 	for (i=globales.min;i<=globales.max;i++) {
 		moy += ((double)h[i])*i;
@@ -306,7 +306,7 @@ MOMENTS CImageNdg::signatures() {
 	return globales;
 }
 
-// opÈrations ensemblistes images binaires
+// op√©rations ensemblistes images binaires
 CImageNdg CImageNdg::operation(const CImageNdg& im, const std::string& methode) {
 
 	if ((&im == this) || !(this->lireBinaire() && im.lireBinaire())) {
@@ -316,7 +316,7 @@ CImageNdg CImageNdg::operation(const CImageNdg& im, const std::string& methode) 
 	CImageNdg out(this->lireHauteur(), this->lireLargeur());
 	out.m_bBinaire = this->lireBinaire(); 
 	out.m_sNom     = this->lireNom()+"Op";
-	out.choixPalette("binaire"); // palette binaire par dÈfaut pour img binaire
+	out.choixPalette("binaire"); // palette binaire par d√©faut pour img binaire
 
 	if (methode.compare("et") == 0) {
 		for (int i=0;i<this->lireNbPixels();i++)
@@ -338,22 +338,22 @@ CImageNdg CImageNdg::seuillage(const std::string& methode, int& seuilBas, int& s
 	if (!this->m_bBinaire) {
 		CImageNdg out(this->lireHauteur(),this->lireLargeur());
 		out.m_sNom     = this->lireNom()+"S";
-		out.choixPalette("binaire"); // palette binaire par dÈfaut
+		out.choixPalette("binaire"); // palette binaire par d√©faut
 		out.m_bBinaire = true;
 		seuilBas = 128;
 		seuilHaut = 255;
 
-		// crÈation lut pour optimisation calcul
+		// cr√©ation lut pour optimisation calcul
 		std::vector<int> lut;
 		lut.resize(256);
 
 		// recherche valeur seuil
-		// cas "manuel" -> seuil reste celui passÈ en paramËtre
+		// cas "manuel" -> seuil reste celui pass√© en param√®tre
 
-		if (methode.compare("automatique") == 0) 
+		if (methode.compare("otsu") == 0) 
 		{
 			std::vector<unsigned long> hist = this->histogramme();
-			std::vector<unsigned long> histC; // histogramme cumulÈ
+			std::vector<unsigned long> histC; // histogramme cumul√©
 			histC.resize(256,0);
 			histC[0] = hist[0];
 			for (int i=1;i<(int)hist.size();i++) 
@@ -367,38 +367,33 @@ CImageNdg CImageNdg::seuillage(const std::string& methode, int& seuilBas, int& s
 			std::vector<double> tab;
 			tab.resize(256,0);
 		
-			double M1,M2;
-		
-			// initialisation
-			M1 = (double)min;
-			double nb=0;
-			M2=0;
-			for (int i=min+1;i<=max;i++) {
-				M2 += (double)hist[i]*i;
-				nb += (double)hist[i];
-			}
-			if (nb > 0)
-				M2 /= nb;
-			tab[min] = fabs(min - (M1 + M2)/2);
-		
-			// parcours
-			for (int i=min+1;i<=max;i++) {
-				M1 = ( (double)histC[i-1]*M1 + hist[i]*i ) / histC[i];
-				M2 = ( (double)(histC[max]-histC[i-1])*M2 - hist[i]*i) / (histC[max]-histC[i]);
-				tab[i] = fabs(i - (M1 + M2)/2);
-			}
+			double M1, M2, w1;
 
-			// recherche s
+			// initialisation
+			M1 = min;
 			seuilBas = min;
 			seuilHaut = 255;
-			for (int i=min+1;i<=max;i++)
-				if (tab[i] < tab[seuilBas])
+
+			w1 = (double)histC[min] / (double)(this->lireNbPixels());
+			M2 = 0;
+			for (int i = min + 1; i <= max; i++)
+				M2 += (double)hist[i] * i;
+			M2 /= (double)(histC[max] - hist[min]);
+			tab[min] = w1 * (1 - w1) * (M1 - M2) * (M1 - M2);
+
+			for (int i = min + 1; i < max; i++) {
+				M1 = ((double)histC[i - 1] * M1 + (double)hist[i] * i) / histC[i];
+				M2 = ((double)(histC[255] - histC[i - 1]) * M2 - hist[i] * i) / (double)(histC[255] - histC[i]);
+				w1 = (double)histC[i] / (double)(this->lireNbPixels());
+				tab[i] = w1 * (1 - w1) * (M1 - M2) * (M1 - M2);
+				if (tab[i] > tab[seuilBas])
 					seuilBas = i;
+			}
 		}
 
 		// fin recherche valeur seuil 
 
-		// gÈnÈration lut
+		// g√©n√©ration lut
 		for (int i = 0; i < seuilBas; i++)
 			lut[i] =  0; 
 		for (int i = seuilBas; i <= seuilHaut; i++)
@@ -406,7 +401,7 @@ CImageNdg CImageNdg::seuillage(const std::string& methode, int& seuilBas, int& s
 		for (int i = seuilHaut+1; i <= 255; i++)
 			lut[i] = 0;
 
-		// crÈation image seuillÈe
+		// cr√©ation image seuill√©e
 		std::cout << "Seuillage des pixels entre " << seuilBas << " et " << seuilHaut << std::endl;
 		for (int i=0; i < out.lireNbPixels(); i++) 
 			out(i) = lut[this->operator ()(i)]; 
@@ -431,7 +426,7 @@ CImageNdg CImageNdg::transformation(const std::string& methode,int vMinOut, int 
 	if (methode.compare("complement") == 0) {
 		if (!this->m_bBinaire) {
 			// ndg -> 255-ndg
-			// crÈation lut pour optimisation calcul
+			// cr√©ation lut pour optimisation calcul
 			std::vector<int> lut;
 			lut.resize(256);
 
@@ -528,7 +523,7 @@ CImageNdg CImageNdg::difference(const CImageNdg& im) const {
 }
 
 // morphologie
-		
+
 CImageNdg CImageNdg::morphologie(const std::string& methode, const std::string& eltStructurant, int taille) {
 
 	CImageNdg out(this->lireHauteur(), this->lireLargeur());
@@ -601,9 +596,9 @@ CImageNdg CImageNdg::morphologie(const std::string& methode, const std::string& 
 					int valeurMin = 255; // Supposons une image en niveaux de gris; ajustez selon le cas
 					for (int di = -taille; di <= taille; di++) {
 						for (int dj = -taille; dj <= taille; dj++) {
-							if (di * di + dj * dj <= taille * taille) { // VÈrification de l'appartenance au disque
-								int ni = i + di; // Nouvelle coordonnÈe i
-								int nj = j + dj; // Nouvelle coordonnÈe j
+							if (di * di + dj * dj <= taille * taille) { // V√©rification de l'appartenance au disque
+								int ni = i + di; // Nouvelle coordonn√©e i
+								int nj = j + dj; // Nouvelle coordonn√©e j
 								// Assurez-vous que ni et nj sont dans les limites de l'image
 								if (ni >= 1 && ni < agrandie.lireHauteur() - 1 && nj >= 1 && nj < agrandie.lireLargeur() - 1) {
 									valeurMin = min(valeurMin, (int)agrandie(ni, nj));
@@ -621,8 +616,8 @@ CImageNdg CImageNdg::morphologie(const std::string& methode, const std::string& 
 					int valeurMin = 255; // Supposons une image en niveaux de gris; ajustez selon le cas
 					for (int di = -taille; di <= taille; di++) {
 						for (int dj = -taille; dj <= taille; dj++) {
-							int ni = i + di; // Nouvelle coordonnÈe i
-							int nj = j + dj; // Nouvelle coordonnÈe j
+							int ni = i + di; // Nouvelle coordonn√©e i
+							int nj = j + dj; // Nouvelle coordonn√©e j
 							// Assurez-vous que ni et nj sont dans les limites de l'image
 							if (ni >= 1 && ni < agrandie.lireHauteur() - 1 && nj >= 1 && nj < agrandie.lireLargeur() - 1) {
 								valeurMin = min(valeurMin, (int)agrandie(ni, nj));
@@ -685,9 +680,9 @@ CImageNdg CImageNdg::morphologie(const std::string& methode, const std::string& 
 					int valeurMax = 0; // Supposons une image en niveaux de gris; ajustez selon le cas
 					for (int di = -taille; di <= taille; di++) {
 						for (int dj = -taille; dj <= taille; dj++) {
-							if (di * di + dj * dj <= taille * taille) { // VÈrification de l'appartenance au disque
-								int ni = i + di; // Nouvelle coordonnÈe i
-								int nj = j + dj; // Nouvelle coordonnÈe j
+							if (di * di + dj * dj <= taille * taille) { // V√©rification de l'appartenance au disque
+								int ni = i + di; // Nouvelle coordonn√©e i
+								int nj = j + dj; // Nouvelle coordonn√©e j
 								// Assurez-vous que ni et nj sont dans les limites de l'image
 								if (ni >= 1 && ni < agrandie.lireHauteur() - 1 && nj >= 1 && nj < agrandie.lireLargeur() - 1) {
 									valeurMax = max(valeurMax, (int)agrandie(ni, nj));
@@ -705,8 +700,8 @@ CImageNdg CImageNdg::morphologie(const std::string& methode, const std::string& 
 					int valeurMax = 0; // Supposons une image en niveaux de gris; ajustez selon le cas
 					for (int di = -taille; di <= taille; di++) {
 						for (int dj = -taille; dj <= taille; dj++) {
-							int ni = i + di; // Nouvelle coordonnÈe i
-							int nj = j + dj; // Nouvelle coordonnÈe j
+							int ni = i + di; // Nouvelle coordonn√©e i
+							int nj = j + dj; // Nouvelle coordonn√©e j
 							// Assurez-vous que ni et nj sont dans les limites de l'image
 							if (ni >= 1 && ni < agrandie.lireHauteur() - 1 && nj >= 1 && nj < agrandie.lireLargeur() - 1) {
 								valeurMax = max(valeurMax, (int)agrandie(ni, nj));
@@ -747,6 +742,173 @@ CImageNdg CImageNdg::blackTopHat(const std::string& strel, int taille) {
 	CImageNdg out = this->fermeture(strel, taille);
 	out = this->difference(out);
 	return out;
+}
+
+double CImageNdg::indicateurPerformance(const CImageNdg& GroundTruth, const std::string& methode) const {
+
+	if (this->lireHauteur() != GroundTruth.lireHauteur() || this->lireLargeur() != GroundTruth.lireLargeur()) {
+		throw std::string("Les images doivent avoir la mÔøΩme taille");
+		return -1;
+	}
+
+	if (!this->lireBinaire() || !GroundTruth.lireBinaire()) {
+		throw std::string("Les images doivent ÔøΩtre binaires");
+		return -1;
+	}
+
+	double res = 0;
+
+	if (methode.compare("iou") == 0) {
+		int cardInter = 0, cardUnion = 0;
+		for (int i = 0; i < this->lireNbPixels(); i++) {
+			if (this->operator()(i) == 1 && GroundTruth(i) == 1) {
+				cardInter++;
+			}
+			if (this->operator()(i) == 1 || GroundTruth(i) == 1) {
+				cardUnion++;
+			}
+		}
+		res = (float)cardInter / cardUnion;
+	}
+	else if (methode.compare("precision") == 0) {
+		double cardInter = 0, cardResult = 0;
+
+		for (int i = 0; i < this->lireNbPixels(); i++) {
+			if (this->operator()(i) == 1 && GroundTruth(i) == 1) {
+				cardInter++;
+			}
+			if (this->operator()(i) == 1) {
+				cardResult++;
+			}
+		}
+		res = cardInter / cardResult;
+
+	}
+	else if (methode.compare("rappel") == 0) {
+		double cardInter = 0, cardGroundTruth = 0;
+
+		for (int i = 0; i < this->lireNbPixels(); i++) {
+			if (this->operator()(i) == 1 && GroundTruth(i) == 1) {
+				cardInter++;
+			}
+			if (GroundTruth(i) == 1) {
+				cardGroundTruth++;
+			}
+		}
+		res = cardInter / cardGroundTruth;
+	}
+	else if (methode.compare("f-meas") == 0) {
+		double cardInter = 0, cardGroundTruth = 0, cardResult = 0;
+
+		for (int i = 0; i < this->lireNbPixels(); i++) {
+			if (this->operator()(i) == 1 && GroundTruth(i) == 1) {
+				cardInter++;
+			}
+			if (GroundTruth(i) == 1) {
+				cardGroundTruth++;
+			}
+			if (this->operator()(i) == 1) {
+				cardResult++;
+			}
+		}
+		res = 2 * cardInter / (cardGroundTruth + cardResult);
+	}
+	else if (methode.compare("jaccard") == 0) {
+		double cardInter = 0, cardUnion = 0;
+
+		for (int i = 0; i < this->lireNbPixels(); i++) {
+			if (this->operator()(i) == 1 && GroundTruth(i) == 1) {
+				cardInter++;
+			}
+			if (this->operator()(i) == 1 || GroundTruth(i) == 1) {
+				cardUnion++;
+			}
+		}
+		res = cardInter / (cardUnion - cardInter);
+	}
+	else if (methode.compare("vinet") == 0) {
+		int nt = 0, nr = 0, nm = 0;
+
+		CImageClasse lab(*this, "V8");
+		CImageClasse labGT(GroundTruth, "V8");
+		std::vector<SIGNATURE_Forme> data = lab.signatures(false);
+		std::vector<SIGNATURE_Forme> dataGT = labGT.signatures(false);
+
+		nm = min(data.size(), dataGT.size());
+		float totalArea = 0;
+		float score = 0;
+
+		for (int i = 1; i < nm; i++) {
+			SIGNATURE_Forme* bestchoice = &dataGT[1];
+			//disanceSQ => (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y) / distanceSQ(POINT p1, POINT p2) / distanceSQ(st[i].CG, bestchoice->CG)
+			float minDis = pow((data[i].centreGravite_i - bestchoice->centreGravite_i),2) + pow((data[i].centreGravite_j - bestchoice->centreGravite_j),2);
+
+			for (int j = 1; j < dataGT.size(); j++) {
+				float dis = pow((data[i].centreGravite_i - dataGT[j].centreGravite_i), 2) + pow((data[i].centreGravite_j - dataGT[j].centreGravite_j), 2);
+				if (dis < minDis) {
+					minDis = dis;
+					bestchoice = &dataGT[j];
+				}
+			}
+
+			/*
+			* 
+			* inline char belongTo(POINT p, REGION reg) {
+				if (p.x > reg.x && p.y > reg.y && p.x < reg.x + reg.width && p.y < reg.y + reg.height) {
+					return 1;
+				}
+				return 0;
+				};
+
+			for (int j = 2; (j < nm) && (belongTo(bestchoice->CG, st[i].region) != 0); j++) {
+				if (distanceSQ(st[i].CG, sr[j].CG) < minDis) {
+					bestchoice = &(sr[j]);
+					minDis = distanceSQ(st[i].CG, bestchoice->CG);
+				}
+			}
+			int minX = MIN(st[i].region.x, bestchoice->region.x);
+			int minY = MIN(st[i].region.y, bestchoice->region.y);
+			int maxX = MAX(st[i].region.x + st[i].region.width, bestchoice->region.x + bestchoice->region.width);
+			int maxY = MAX(st[i].region.y + st[i].region.height, bestchoice->region.y + bestchoice->region.height);
+			REGION compareRegion = { minX, minY, maxX - minX, maxY - minY };
+
+			totalArea += compareRegion.height * compareRegion.width;
+			score += (compareRegion.height * compareRegion.width) * localIoU(test, refc, compareRegion);
+			*
+			* 
+			*/
+		}
+	}
+	else {
+		throw std::string("Methode non reconnue");
+		return -1;
+	}
+
+	return res;
+}
+
+double CImageNdg::correlation(const CImageNdg& GroundTruth) const {
+
+	double sum_A = 0, sum_B = 0;
+	double mean_A, mean_B;
+	double numerator = 0, denominator_A = 0, denominator_B = 0;
+	double correlation;
+
+	for (int i = 0; i < this->lireNbPixels(); i++) {
+		sum_A += this->operator()(i);
+		sum_B += GroundTruth(i);
+	}
+
+	mean_A = sum_A / this->lireNbPixels();
+	mean_B = sum_B / this->lireNbPixels();
+
+	for (int i = 0; i < this->lireNbPixels(); i++) {
+		numerator += (this->operator()(i) - mean_A) * (GroundTruth(i) - mean_B);
+		denominator_A += pow(this->operator()(i) - mean_A, 2);
+		denominator_B += pow(GroundTruth(i) - mean_B, 2);
+	}
+
+	return (numerator / sqrt(denominator_A * denominator_B));
 }
 
 // filtrage

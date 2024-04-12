@@ -10,6 +10,8 @@
 #include <vector>
 #include <string>
 
+#include "ImageClasse.h"
+
 typedef struct {
 	int		min;
 	int		max;
@@ -208,10 +210,8 @@ class CImageNdg {
 		_declspec(dllexport) CImageNdg whiteTopHat(const std::string& strel = "V4", int taille = 3);
 		_declspec(dllexport) CImageNdg blackTopHat(const std::string& strel = "V4", int taille = 3);
 
-		_declspec(dllexport) CImageNdg hough(int threshold = 150, bool diffLine = false);
-
 		_declspec(dllexport) double indicateurPerformance(const CImageNdg& GroundTruth, const std::string& methode) const;
-		_declspec(dllexport) double correlation(const CImageNdg& GroundTruth);
+		_declspec(dllexport) double correlation(const CImageNdg& GroundTruth) const;
 
 		// filtrage
 		_declspec(dllexport) CImageNdg filtrage(const std::string& methode = "moyennage", int Ni = 3, int Nj = 3); // choix "moyennage" / "median"

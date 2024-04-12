@@ -45,10 +45,10 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol){
 
 	CImageNdg blackTopHat = img.blackTopHat("disk", 17);
 
-	int seuilBas = 0;
+	int seuilBas = 128;
 	int seuilHaut = 255;
 
-	CImageNdg seuil = blackTopHat.seuillage("automatique",seuilBas, seuilHaut);
+	CImageNdg seuil = blackTopHat.seuillage("otsu", seuilBas, seuilHaut);
 
 	this->dataFromImg.at(0) = seuilBas;
 

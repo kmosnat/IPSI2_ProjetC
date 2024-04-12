@@ -85,41 +85,6 @@ namespace POAT
             }
         }
 
-        private void bSeuillageAuto_Click(object sender, EventArgs e)
-        {
-            // traitement donc transférer data bmp vers C++
-
-            imageSeuillee.Show();
-            //valeurSeuilAuto.Show();
-
-            Bitmap bmp = new Bitmap(image_db.Image);
-            ClImage Img = new ClImage();
-
-            unsafe
-            {
-                BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                Img.objetLibDataImgPtr(1, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-                // 1 champ texte retour C++, le seuil auto
-                bmp.UnlockBits(bmpData);
-            }
-
-            //valeurSeuilAuto.Text = Img.objetLibValeurChamp(0).ToString();
-
-            imageSeuillee.Width = bmp.Width;
-            imageSeuillee.Height = bmp.Height;
-
-            // pour centrer image dans panel
-            if (imageSeuillee.Width < image_db.Width)
-                imageSeuillee.Left = (image_db.Width - imageSeuillee.Width) / 2;
-
-            if (imageSeuillee.Height < image_db.Height)
-                imageSeuillee.Top = (image_db.Height - imageSeuillee.Height) / 2;
-
-            // transférer C++ vers bmp
-            imageSeuillee.Image = bmp;
-
-        }
-
         private void bouton_ouvrir_Click(object sender, EventArgs e)
         {
             // Choix du dossier contenant les images
@@ -162,7 +127,7 @@ namespace POAT
                 string sourceImagePath = Path.Combine(folderBrowserDialog1.SelectedPath, "Source_Images", imageName + ".bmp");
 
                 // Construit le chemin complet de l'image dans le dossier Ground truth - png
-                string groundTruthImagePath = Path.Combine(folderBrowserDialog1.SelectedPath, "Ground_truth", imageName + ".png");
+                string groundTruthImagePath = Path.Combine(folderBrowserDialog1.SelectedPath, "Ground_truth", imageName + ".bmp");
 
                 // Vérifie si les fichiers existent
                 if (File.Exists(sourceImagePath) && File.Exists(groundTruthImagePath))
@@ -170,6 +135,32 @@ namespace POAT
                     // Charge les images dans les pictureBox correspondantes
                     image_db.Image = Image.FromFile(sourceImagePath);
                     image_gt.Image = Image.FromFile(groundTruthImagePath);
+
+                    Bitmap bmp = new Bitmap(image_db.Image);
+                    ClImage Img = new ClImage();
+
+                    unsafe
+                    {
+                        BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                        Img.objetLibDataImgPtr(1, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
+                        // 1 champ texte retour C++, le seuil auto
+                        bmp.UnlockBits(bmpData);
+                    }
+
+                    //valeurSeuilAuto.Text = Img.objetLibValeurChamp(0).ToString();
+
+                    image_traitée.Width = bmp.Width;
+                    image_traitée.Height = bmp.Height;
+
+                    // pour centrer image dans panel
+                    if (image_traitée.Width < image_db.Width)
+                        image_traitée.Left = (image_db.Width - image_traitée.Width) / 2;
+
+                    if (image_traitée.Height < image_db.Height)
+                        image_traitée.Top = (image_db.Height - image_traitée.Height) / 2;
+
+                    // transférer C++ vers bmp
+                    image_traitée.Image = bmp;
                 }
                 else
                 {
@@ -179,6 +170,6 @@ namespace POAT
 
         }
 
-     
+
     }
 }

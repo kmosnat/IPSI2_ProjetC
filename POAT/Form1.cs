@@ -83,9 +83,10 @@ namespace POAT
                     var bmpDataGt = bmpGt.LockBits(new Rectangle(0, 0, bmpGt.Width, bmpGt.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
                     Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-                    ImgGT.objetLibDataImgPtr(0, bmpDataGt.Scan0, bmpDataGt.Stride, bmpGt.Height, bmpGt.Width);
 
-                    Img.processPtr(ImgGT.objetLibPtr());
+                    var gt = ImgGT.objetLibDataImgPtr(2, bmpDataGt.Scan0, bmpDataGt.Stride, bmpGt.Height, bmpGt.Width);
+           
+                    Img.processPtr(gt);
 
                     bmp.UnlockBits(bmpData);
                     bmpGt.UnlockBits(bmpDataGt);
@@ -154,6 +155,7 @@ namespace POAT
                 image_db.Image = null;
                 image_gt.Image = null;
                 image_traitée.Image = null;
+                comparaison.Image = null;
 
                 //remise à zéro des labels
                 iou_label.Text = "Iou (%) : ";

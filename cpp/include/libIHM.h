@@ -17,7 +17,7 @@ private:
 	int						nbDataImg; // nb champs Texte de l'IHM
 	std::vector<double>		dataFromImg; // champs Texte de l'IHM
 	CImageCouleur*          imgPt;       // 
-	CImageNdg				imgNdgPt;     //
+	CImageNdg*				imgNdgPt;     //
 	byte*					data;       // champs Texte de l'IHM
 	int NbLig;
 	int NbCol;
@@ -52,9 +52,9 @@ public:
 		dataFromImg.at(i) = val;
 	}
 
-	// méthodes
-
 	_declspec(dllexport) void runProcess(ClibIHM* pImgGt);
+
+	_declspec(dllexport) void persitData(CImageNdg pImg);
 
 };
 

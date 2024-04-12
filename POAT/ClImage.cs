@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using System.Runtime.InteropServices;
 using System.Drawing;
+using System.Data;
 
 namespace libImage
 {
@@ -48,12 +49,11 @@ namespace libImage
         }
 
         [DllImport("libImage.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr process(int nbChamps, IntPtr data, IntPtr dataGT, int stride, int nbLig, int nbCol);
+        public static extern IntPtr process(IntPtr pImg, IntPtr pImgGT);
 
-        public IntPtr processPtr(int nbChamps, IntPtr data, IntPtr dataGT, int stride, int nbLig, int nbCol)
+        public IntPtr processPtr(IntPtr pImgGT)
         {
-            ClPtr = process(nbChamps, data, dataGT, stride, nbLig, nbCol);
-            return ClPtr;
+            return process(ClPtr, pImgGT);
         }
 
         [DllImport("libImage.dll", CallingConvention = CallingConvention.Cdecl)]

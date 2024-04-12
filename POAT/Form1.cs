@@ -64,6 +64,7 @@ namespace POAT
 
         private async void processImage(string Source, string Ground_Truth)
         {
+   
             await Task.Run(() =>
             {
                 // Chargement des images
@@ -74,13 +75,17 @@ namespace POAT
                 Bitmap bmpGt = new Bitmap(imageGt);
 
                 ClImage Img = new ClImage();
+                ClImage ImgGT = new ClImage();
 
                 unsafe
                 {
                     var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
                     var bmpDataGt = bmpGt.LockBits(new Rectangle(0, 0, bmpGt.Width, bmpGt.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
-                    Img.processPtr(2, bmpData.Scan0, bmpDataGt.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
+                    Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
+                    ImgGT.objetLibDataImgPtr(0, bmpDataGt.Scan0, bmpDataGt.Stride, bmpGt.Height, bmpGt.Width);
+
+                    Img.processPtr(ImgGT.objetLibPtr());
 
                     bmp.UnlockBits(bmpData);
                     bmpGt.UnlockBits(bmpDataGt);
@@ -91,6 +96,7 @@ namespace POAT
                     iou_label.Text = "Iou (%) : " + Img.objetLibValeurChamp(0).ToString();
                     vinet_label.Text = "Vinet (%) : " + Img.objetLibValeurChamp(1).ToString();
                     image_traitée.Image = bmp;
+                    comparaison.Image = bmpGt;
                 }));
             });
         }

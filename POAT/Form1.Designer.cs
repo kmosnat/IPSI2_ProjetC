@@ -28,14 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             ouvrirImage = new OpenFileDialog();
-            bSeuillageAuto = new Button();
-            buttonOuvrir = new Button();
-            valeurSeuilAuto = new TextBox();
-            imageSeuillee = new PictureBox();
-            imageDepart = new PictureBox();
-            ((System.ComponentModel.ISupportInitialize)imageSeuillee).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)imageDepart).BeginInit();
+            image_db = new PictureBox();
+            treeView_in_sc = new TreeView();
+            bouton_ouvrir = new Button();
+            In_Sc_list = new ImageList(components);
+            folderBrowserDialog1 = new FolderBrowserDialog();
+            image_gt = new PictureBox();
+            ((System.ComponentModel.ISupportInitialize)image_db).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)image_gt).BeginInit();
             SuspendLayout();
             // 
             // ouvrirImage
@@ -44,76 +46,79 @@
             ouvrirImage.Filter = "bmp | *.bmp*";
             ouvrirImage.Multiselect = true;
             // 
-            // bSeuillageAuto
+            // image_db
             // 
-            bSeuillageAuto.Location = new Point(957, 477);
-            bSeuillageAuto.Name = "bSeuillageAuto";
-            bSeuillageAuto.Size = new Size(150, 46);
-            bSeuillageAuto.TabIndex = 2;
-            bSeuillageAuto.Text = "Go";
-            bSeuillageAuto.UseVisualStyleBackColor = true;
-            bSeuillageAuto.Click += bSeuillageAuto_Click;
+            image_db.Location = new Point(285, 54);
+            image_db.Margin = new Padding(2);
+            image_db.Name = "image_db";
+            image_db.Size = new Size(309, 304);
+            image_db.TabIndex = 7;
+            image_db.TabStop = false;
             // 
-            // buttonOuvrir
+            // treeView_in_sc
             // 
-            buttonOuvrir.Location = new Point(398, 952);
-            buttonOuvrir.Name = "buttonOuvrir";
-            buttonOuvrir.Size = new Size(150, 46);
-            buttonOuvrir.TabIndex = 3;
-            buttonOuvrir.Text = "OpenFile";
-            buttonOuvrir.UseVisualStyleBackColor = true;
-            buttonOuvrir.Click += buttonOuvrir_Click_1;
+            treeView_in_sc.ImageIndex = 0;
+            treeView_in_sc.ImageList = In_Sc_list;
+            treeView_in_sc.Location = new Point(12, 54);
+            treeView_in_sc.Name = "treeView_in_sc";
+            treeView_in_sc.SelectedImageIndex = 0;
+            treeView_in_sc.Size = new Size(182, 671);
+            treeView_in_sc.TabIndex = 8;
+            treeView_in_sc.AfterSelect += treeView_in_sc_AfterSelect;
             // 
-            // valeurSeuilAuto
+            // bouton_ouvrir
             // 
-            valeurSeuilAuto.Location = new Point(1487, 956);
-            valeurSeuilAuto.Name = "valeurSeuilAuto";
-            valeurSeuilAuto.Size = new Size(200, 39);
-            valeurSeuilAuto.TabIndex = 4;
+            bouton_ouvrir.Location = new Point(44, 14);
+            bouton_ouvrir.Name = "bouton_ouvrir";
+            bouton_ouvrir.Size = new Size(112, 34);
+            bouton_ouvrir.TabIndex = 9;
+            bouton_ouvrir.Text = "Ouvrir";
+            bouton_ouvrir.UseVisualStyleBackColor = true;
+            bouton_ouvrir.Click += bouton_ouvrir_Click;
             // 
-            // imageSeuillee
+            // In_Sc_list
             // 
-            imageSeuillee.Location = new Point(1203, 136);
-            imageSeuillee.Name = "imageSeuillee";
-            imageSeuillee.Size = new Size(723, 699);
-            imageSeuillee.SizeMode = PictureBoxSizeMode.StretchImage;
-            imageSeuillee.TabIndex = 6;
-            imageSeuillee.TabStop = false;
+            In_Sc_list.ColorDepth = ColorDepth.Depth8Bit;
+            In_Sc_list.ImageSize = new Size(16, 16);
+            In_Sc_list.TransparentColor = Color.Transparent;
             // 
-            // imageDepart
+            // image_gt
             // 
-            imageDepart.Location = new Point(98, 136);
-            imageDepart.Name = "imageDepart";
-            imageDepart.Size = new Size(698, 699);
-            imageDepart.TabIndex = 7;
-            imageDepart.TabStop = false;
+            image_gt.Location = new Point(285, 413);
+            image_gt.Margin = new Padding(2);
+            image_gt.Name = "image_gt";
+            image_gt.Size = new Size(309, 304);
+            image_gt.TabIndex = 10;
+            image_gt.TabStop = false;
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(13F, 32F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1981, 1047);
-            Controls.Add(imageDepart);
-            Controls.Add(imageSeuillee);
-            Controls.Add(valeurSeuilAuto);
-            Controls.Add(buttonOuvrir);
-            Controls.Add(bSeuillageAuto);
+            ClientSize = new Size(1204, 775);
+            Controls.Add(image_gt);
+            Controls.Add(bouton_ouvrir);
+            Controls.Add(treeView_in_sc);
+            Controls.Add(image_db);
+            Margin = new Padding(2);
             Name = "Form1";
             Text = "Form1";
             Load += Form1_Load;
-            ((System.ComponentModel.ISupportInitialize)imageSeuillee).EndInit();
-            ((System.ComponentModel.ISupportInitialize)imageDepart).EndInit();
+            ((System.ComponentModel.ISupportInitialize)image_db).EndInit();
+            ((System.ComponentModel.ISupportInitialize)image_gt).EndInit();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
 
         private OpenFileDialog ouvrirImage;
         private Button bSeuillageAuto;
-        private Button buttonOuvrir;
-        private TextBox valeurSeuilAuto;
         private PictureBox imageSeuillee;
-        private PictureBox imageDepart;
+        private PictureBox image_db;
+        private TreeView treeView_in_sc;
+        private Button bouton_ouvrir;
+        private ImageList In_Sc_list;
+        private FolderBrowserDialog folderBrowserDialog1;
+        private PictureBox image_gt;
     }
 }

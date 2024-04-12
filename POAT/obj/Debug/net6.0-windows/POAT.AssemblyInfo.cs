@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("POAT")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+08c133070fdcd1768413c6c44db17e1d03e572c3")]
 [assembly: System.Reflection.AssemblyProductAttribute("POAT")]
 [assembly: System.Reflection.AssemblyTitleAttribute("POAT")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

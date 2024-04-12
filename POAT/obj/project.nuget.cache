@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "H8p69cTuwYjYxprx2xsPnTxfxSVlljHpdRmN+4VbEgfnIbrSsxfELEgk+i6iwrjeNmtYIU0V84lQoQIgpqsOpA==",
+  "dgSpecHash": "16iabvnKurFu+bZCU0dh50SmmO1dZHl0kPeOeaExsW1w+RjZPZ+Bkur8ELWJmrINtL576tn6A8bND53f62K8sg==",
   "success": true,
-  "projectFilePath": "C:\\Devs\\Sources\\IPSI2\\ProjetC++\\POAT\\POAT.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\Chloé\\Documents\\projet C++\\IPSI2_ProjetC\\POAT\\POAT.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Chloé\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.25\\microsoft.windowsdesktop.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\Chloé\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.25\\microsoft.netcore.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\Chloé\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.25\\microsoft.aspnetcore.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\Chloé\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.25\\microsoft.netcore.app.host.win-x64.6.0.25.nupkg.sha512"
+  ],
   "logs": []
 }

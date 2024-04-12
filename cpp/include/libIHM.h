@@ -26,6 +26,7 @@ public:
 	_declspec(dllexport) ClibIHM(); // par défaut
 
 	_declspec(dllexport) ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol); // par image format bmp C#
+	_declspec(dllexport) ClibIHM(int nbChamps, byte* data, byte* gt, int stride, int nbLig, int nbCol); // par image format bmp C#
 
 	_declspec(dllexport) ~ClibIHM();
 
@@ -43,6 +44,10 @@ public:
 		return imgPt;
 	}
 
+	_declspec(dllexport) void ecrireChamp(int i, double val) {
+		dataFromImg.at(i) = val;
+	}
+
 };
 
 extern "C" _declspec(dllexport) ClibIHM* objetLib()
@@ -53,9 +58,16 @@ extern "C" _declspec(dllexport) ClibIHM* objetLib()
 
 extern "C" _declspec(dllexport) ClibIHM* objetLibDataImg(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 {
-	ClibIHM* pImg = new ClibIHM(nbChamps,data,stride,nbLig,nbCol);
+	ClibIHM* pImg = new ClibIHM(nbChamps, data, stride, nbLig, nbCol);
 	return pImg;
 }
+
+extern "C" _declspec(dllexport) ClibIHM * process(int nbChamps, byte* data, byte* dataGT, int stride, int nbLig, int nbCol)
+{
+    ClibIHM* pImg = new ClibIHM(nbChamps, data, dataGT, stride, nbLig, nbCol);
+    return pImg;
+}
+
 
 extern "C" _declspec(dllexport) double valeurChamp(ClibIHM* pImg, int i)
 {

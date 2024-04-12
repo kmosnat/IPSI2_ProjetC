@@ -113,17 +113,21 @@ namespace POAT
                     image_gt.Image = Image.FromFile(groundTruthImagePath);
 
                     Bitmap bmp = new Bitmap(image_db.Image);
+                    Bitmap bmp_gt = new Bitmap(image_gt.Image);
                     ClImage Img = new ClImage();
 
                     unsafe
                     {
                         BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                        Img.objetLibDataImgPtr(1, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
+                        BitmapData bmpData_gt = bmp_gt.LockBits(new Rectangle(0, 0, bmp_gt.Width, bmp_gt.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+                        Img.processPtr(2, bmpData.Scan0, bmpData_gt.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
                         // 1 champ texte retour C++, le seuil auto
                         bmp.UnlockBits(bmpData);
                     }
 
-                    //valeurSeuilAuto.Text = Img.objetLibValeurChamp(0).ToString();
+                    iou_label.Text = "Iou (%) : " + Img.objetLibValeurChamp(0).ToString();
+                    vinet_label.Text = "Vinet (%) : " + Img.objetLibValeurChamp(1).ToString();
 
                     // transférer C++ vers bmp
                     image_traitée.Image = bmp;

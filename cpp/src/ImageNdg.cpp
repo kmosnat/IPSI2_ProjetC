@@ -828,7 +828,7 @@ double CImageNdg::indicateurPerformance(const CImageNdg& GroundTruth, const std:
 	}
 	else if (methode.compare("vinet") == 0) {
 		int nt = 0, nr = 0, nm = 0;
-
+		/*
 		CImageClasse lab(*this, "V8");
 		CImageClasse labGT(GroundTruth, "V8");
 		std::vector<SIGNATURE_Forme> data = lab.signatures(false);
@@ -850,7 +850,7 @@ double CImageNdg::indicateurPerformance(const CImageNdg& GroundTruth, const std:
 					bestchoice = &dataGT[j];
 				}
 			}
-
+			*/
 			/*
 			* 
 			* inline char belongTo(POINT p, REGION reg) {
@@ -876,8 +876,8 @@ double CImageNdg::indicateurPerformance(const CImageNdg& GroundTruth, const std:
 			score += (compareRegion.height * compareRegion.width) * localIoU(test, refc, compareRegion);
 			*
 			* 
-			*/
-		}
+			
+		}*/
 	}
 	else {
 		throw std::string("Methode non reconnue");

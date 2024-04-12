@@ -48,11 +48,11 @@ namespace libImage
         }
 
         [DllImport("libImage.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr objetCompare(int nbChamps, IntPtr data, IntPtr GT, int stride, int nbLig, int nbCol);
+        public static extern IntPtr process(int nbChamps, IntPtr data, IntPtr dataGT, int stride, int nbLig, int nbCol);
 
-        public IntPtr objetComparePtr(int nbChamps, IntPtr data, IntPtr GT, int stride, int nbLig, int nbCol)
+        public IntPtr processPtr(int nbChamps, IntPtr data, IntPtr dataGT, int stride, int nbLig, int nbCol)
         {
-            ClPtr = objetCompare(nbChamps, data, GT, stride, nbLig, nbCol);
+            ClPtr = process(nbChamps, data, dataGT, stride, nbLig, nbCol);
             return ClPtr;
         }
 

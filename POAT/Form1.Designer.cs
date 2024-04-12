@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            ouvrirImage = new OpenFileDialog();
             image_db = new PictureBox();
             treeView_in_sc = new TreeView();
             In_Sc_list = new ImageList(components);
@@ -41,12 +40,6 @@
             ((System.ComponentModel.ISupportInitialize)image_gt).BeginInit();
             ((System.ComponentModel.ISupportInitialize)image_traitée).BeginInit();
             SuspendLayout();
-            // 
-            // ouvrirImage
-            // 
-            ouvrirImage.FileName = "openFileDialog1";
-            ouvrirImage.Filter = "bmp | *.bmp*";
-            ouvrirImage.Multiselect = true;
             // 
             // image_db
             // 
@@ -61,7 +54,7 @@
             treeView_in_sc.ImageIndex = 0;
             treeView_in_sc.ImageList = In_Sc_list;
             treeView_in_sc.Location = new Point(16, 69);
-            treeView_in_sc.Margin = new Padding(4, 4, 4, 4);
+            treeView_in_sc.Margin = new Padding(4);
             treeView_in_sc.Name = "treeView_in_sc";
             treeView_in_sc.SelectedImageIndex = 0;
             treeView_in_sc.Size = new Size(235, 858);
@@ -77,7 +70,7 @@
             // bouton_ouvrir
             // 
             bouton_ouvrir.Location = new Point(57, 18);
-            bouton_ouvrir.Margin = new Padding(4, 4, 4, 4);
+            bouton_ouvrir.Margin = new Padding(4);
             bouton_ouvrir.Name = "bouton_ouvrir";
             bouton_ouvrir.Size = new Size(146, 44);
             bouton_ouvrir.TabIndex = 9;
@@ -113,7 +106,6 @@
             Controls.Add(image_db);
             Name = "Form1";
             Text = "Form1";
-            Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)image_db).EndInit();
             ((System.ComponentModel.ISupportInitialize)image_gt).EndInit();
             ((System.ComponentModel.ISupportInitialize)image_traitée).EndInit();
@@ -121,8 +113,6 @@
         }
 
         #endregion
-
-        private OpenFileDialog ouvrirImage;
         private Button bSeuillageAuto;
         private PictureBox imageSeuillee;
         private PictureBox image_db;

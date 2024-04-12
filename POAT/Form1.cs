@@ -49,42 +49,6 @@ namespace POAT
 
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void buttonOuvrir_Click_1(object sender, EventArgs e)
-        {
-            if (ouvrirImage.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
-                    Bitmap bmp;
-                    Image img = Image.FromFile(ouvrirImage.FileName);
-                    bmp = new Bitmap(img);
-
-                    image_db.Width = bmp.Width;
-                    image_db.Height = bmp.Height;
-                    // pour centrer image dans panel
-                    if (image_db.Width < image_db.Width)
-                        image_db.Left = (image_db.Width - image_db.Width) / 2;
-
-                    if (image_db.Height < image_db.Height)
-                        image_db.Top = (image_db.Height - image_db.Height) / 2;
-
-                    image_db.Image = bmp;
-
-                    imageSeuillee.Hide();
-                    //valeurSeuilAuto.Hide();
-                }
-                catch
-                {
-                    MessageBox.Show("erreur !");
-                }
-            }
-        }
-
         private void bouton_ouvrir_Click(object sender, EventArgs e)
         {
             // Choix du dossier contenant les images

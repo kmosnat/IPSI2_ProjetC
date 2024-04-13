@@ -22,58 +22,44 @@ namespace POAT
             InitializeComponent();
         }
 
+        private string sourceImagesPath;
+        private string groundTruthsImagePath;
+
         private void AjouterNoeudsLnSn()
         {
-            TreeNode noeud_ln = new TreeNode("In");
-            TreeNode noeud_sn = new TreeNode("Sc");
+            var noeud_ln = new TreeNode("In");
+            var noeud_sn = new TreeNode("Sc");
 
-            // Trie les clés de ImageList
-            List<string> sortedKeys = In_Sc_list.Images.Keys.Cast<string>()
-                             .Select(key => Path.GetFileNameWithoutExtension(key))
-                             .OrderBy(key => int.Parse(key.Substring(3)))
-                             .ToList();
+            // Trie et groupe les clés de ImageList par préfixe
+            var groupedKeys = In_Sc_list.Images.Keys.Cast<string>()
+                                   .Select(key => new { Key = key, FileName = Path.GetFileNameWithoutExtension(key) })
+                                   .OrderBy(item => int.Parse(item.FileName.Substring(3)))
+                                   .GroupBy(item => item.FileName.StartsWith("In_"))
+                                   .ToList();
 
-            // Parcours des clés/Images triées
-            foreach (var imageEntryKey in sortedKeys)
+            // Ajoute les nœuds enfants à leur noeud parent approprié
+            foreach (var group in groupedKeys)
             {
-                if (imageEntryKey.StartsWith("In_"))
+                var parent = group.Key ? noeud_ln : noeud_sn;
+                foreach (var item in group)
                 {
-                    TreeNode enfant_ln = new TreeNode
-                    {
-                        ImageIndex = In_Sc_list.Images.Keys.IndexOf(imageEntryKey),
-                        SelectedImageIndex = In_Sc_list.Images.Keys.IndexOf(imageEntryKey),
-                        Text = imageEntryKey
-                    };
-                    noeud_ln.Nodes.Add(enfant_ln);
-                }
-                else if (imageEntryKey.StartsWith("Sc_"))
-                {
-                    TreeNode enfant_sn = new TreeNode
-                    {
-                        ImageIndex = In_Sc_list.Images.Keys.IndexOf(imageEntryKey),
-                        SelectedImageIndex = In_Sc_list.Images.Keys.IndexOf(imageEntryKey),
-                        Text = imageEntryKey
-                    };
-                    noeud_sn.Nodes.Add(enfant_sn);
+                    int index = In_Sc_list.Images.Keys.IndexOf(item.Key);
+                    var child = new TreeNode(item.FileName) { ImageIndex = index, SelectedImageIndex = index };
+                    parent.Nodes.Add(child);
                 }
             }
 
-            treeView_in_sc.Nodes.Add(noeud_ln);
-            treeView_in_sc.Nodes.Add(noeud_sn);
+            treeView_in_sc.Nodes.AddRange(new[] { noeud_ln, noeud_sn });
         }
+
 
         private async void processImage(string Source, string Ground_Truth)
         {
-   
-            await Task.Run(() =>
+            // Utilisation de Task.Run pour exécuter le traitement d'image de manière asynchrone et retourner les valeurs nécessaires
+            (Bitmap processedImage, Bitmap groundTruthImage, double iouValue, double vinetValue) = await Task.Run(() =>
             {
-                // Chargement des images
-                var imageDb = Image.FromFile(Source);
-                var imageGt = Image.FromFile(Ground_Truth);
-
-                Bitmap bmp = new Bitmap(imageDb);
-                Bitmap bmpGt = new Bitmap(imageGt);
-
+                Bitmap bmp = new Bitmap(Image.FromFile(Source));
+                Bitmap bmpGt = new Bitmap(Image.FromFile(Ground_Truth));
                 ClImage Img = new ClImage();
                 ClImage ImgGT = new ClImage();
 
@@ -81,7 +67,6 @@ namespace POAT
                 {
                     var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
                     var bmpDataGt = bmpGt.LockBits(new Rectangle(0, 0, bmpGt.Width, bmpGt.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-
                     Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
                     Img.processPtr(ImgGT.objetLibDataImgPtr(2, bmpDataGt.Scan0, bmpDataGt.Stride, bmpGt.Height, bmpGt.Width));
 
@@ -89,14 +74,18 @@ namespace POAT
                     bmpGt.UnlockBits(bmpDataGt);
                 }
 
-                this.Invoke(new Action(() =>
-                {
-                    iou_label.Text = "Iou (%) : " + Img.objetLibValeurChamp(0).ToString();
-                    vinet_label.Text = "Vinet (%) : " + Img.objetLibValeurChamp(1).ToString();
-                    image_traitée.Image = bmp;
-                    comparaison.Image = bmpGt;
-                }));
+                // Récupération des valeurs de performance à partir de l'objet Img
+                double iou = Img.objetLibValeurChamp(0);
+                double vinet = Img.objetLibValeurChamp(1);
+
+                return (bmp, bmpGt, iou, vinet);
             });
+
+            // Mise à jour de l'interface utilisateur avec les valeurs retournées
+            iou_label.Text = $"Iou (%) : {iouValue}";
+            vinet_label.Text = $"Vinet (%) : {vinetValue}";
+            image_traitée.Image = processedImage;
+            comparaison.Image = groundTruthImage;
         }
 
         private void ouvrirDossierToolStripMenuItem_Click(object sender, EventArgs e)
@@ -105,10 +94,11 @@ namespace POAT
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
                 string selectedPath = folderBrowserDialog1.SelectedPath;
-                string sourceImagesFolder = Path.Combine(selectedPath, "Source_Images");
+                sourceImagesPath = Path.Combine(selectedPath, "Source_Images");
+                groundTruthsImagePath = Path.Combine(selectedPath, "Ground_truth");
 
                 // Charger toutes les images du dossier Source Images - bmp
-                string[] sourceImageFiles = Directory.GetFiles(sourceImagesFolder, "*.bmp");
+                string[] sourceImageFiles = Directory.GetFiles(sourceImagesPath, "*.bmp");
                 if (sourceImageFiles.Length > 0)
                 {
                     foreach (string filePath in sourceImageFiles)
@@ -136,11 +126,11 @@ namespace POAT
                 // Récupère le nom de l'image à partir du texte du nœud
                 string imageName = e.Node.Text;
 
-                // Construit le chemin complet de l'image dans le dossier Source Images - bmp
-                string sourceImagePath = Path.Combine(folderBrowserDialog1.SelectedPath, "Source_Images", imageName + ".bmp");
+                // Construit le chemin complet de l'image dans le dossier Source Images
+                string sourceImagePath = Path.Combine(sourceImagesPath, imageName + ".bmp");
 
-                // Construit le chemin complet de l'image dans le dossier Ground truth - png
-                string groundTruthImagePath = Path.Combine(folderBrowserDialog1.SelectedPath, "Ground_truth", imageName + ".bmp");
+                // Construit le chemin complet de l'image dans le dossier Ground truth
+                string groundTruthImagePath = Path.Combine(groundTruthsImagePath, imageName + ".bmp");
 
                 if (!File.Exists(sourceImagePath) || !File.Exists(groundTruthImagePath))
                 {

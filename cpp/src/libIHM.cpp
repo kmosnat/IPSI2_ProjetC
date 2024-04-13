@@ -101,17 +101,15 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 {
 	int seuilBas = 0;
 	int seuilHaut = 255;
-
-	//correlataion
 	
-	CImageNdg whiteTopHat = this->imgNdgPt->whiteTopHat("disk", 17);
+	CImageNdg whiteTopHat = this->imgNdgPt->transformation().whiteTopHat("disk", 17);
 
 	CImageNdg seuil = whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
 	CImageNdg GT = pImgGt->toNdg();
 	
 	this->writeImage(seuil);
-	this->compare(pImgGt);
 	this->iou(pImgGt);
+	this->compare(pImgGt);
 
 	this->persitData(this->imgNdgPt, COULEUR::RVB);
 }

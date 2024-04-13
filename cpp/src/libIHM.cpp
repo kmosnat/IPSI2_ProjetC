@@ -58,33 +58,67 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 
 void ClibIHM::runProcess(ClibIHM* pImgGt)
 {
-	
 	int seuilBas = 128;
 	int seuilHaut = 255;
 
-	// Application des opérations Top-Hat
-	CImageNdg whiteTopHat = this->imgNdgPt->whiteTopHat("disk", 17);
+	CImageNdg whiteTopHat = this->imgNdgPt->whiteTopHat("disk", 3);
 
-	CImageNdg seuil = whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
-	this->persitData(seuil);
+	CImageNdg seuil = whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 3).morphologie("dilatation", "V8", 3);
 
-	CImageNdg seuilGT = pImgGt->imgNdgPt->seuillage("otsu", seuilBas, seuilHaut);
-	pImgGt->persitData(seuilGT);
+	for (int y = 0; y < NbLig; y++)
+	{
+		for (int x = 0; x < NbCol; x++)
+		{
+			if (seuil(y, x) == 1)
+			{
+				this->imgNdgPt->operator()(y, x) = 255;
+			}
+			else
+			{
+				this->imgNdgPt->operator()(y, x) = 0;
+			}
+		}
+	}
 
-	//this->dataFromImg.at(0) = floor((seuil.indicateurPerformance(imgGT, "iou") * 100) * 100) / 100;
+	pImgGt->persitData(pImgGt->imgNdgPt, COULEUR::vert);
+	this->persitData(this->imgNdgPt, COULEUR::rouge);
 }
 
-void ClibIHM::persitData(CImageNdg pImg)
+
+void ClibIHM::persitData(CImageNdg* pImg, COULEUR color)
 {
 	CImageCouleur out(NbLig, NbCol);
 
-	
 	// Conversion de l'image en couleur
-	for (int i = 0; i < pImg.lireNbPixels(); i++)
+	for (int y = 0; y < NbLig; y++)
 	{
-		out(i)[0] = (unsigned char)(255 * (int)pImg(i));
-		out(i)[1] = 0;
-		out(i)[2] = 0;
+		for (int x = 0; x < NbCol; x++)
+		{
+			if (color == COULEUR::RVB)
+			{
+				out(y, x)[0] = pImg->operator()(y, x);
+				out(y, x)[1] = pImg->operator()(y, x);
+				out(y, x)[2] = pImg->operator()(y, x);
+			}
+			else if (color == COULEUR::rouge)
+			{
+				out(y, x)[0] = pImg->operator()(y, x);
+				out(y, x)[1] = 0;
+				out(y, x)[2] = 0;
+			}
+			else if (color == COULEUR::vert)
+			{
+				out(y, x)[0] = 0;
+				out(y, x)[1] = pImg->operator()(y, x);
+				out(y, x)[2] = 0;
+			}
+			else if (color == COULEUR::bleu)
+			{
+				out(y, x)[0] = 0;
+				out(y, x)[1] = 0;
+				out(y, x)[2] = pImg->operator()(y, x);
+			}
+		}
 	}
 
 	// Ecriture de l'image

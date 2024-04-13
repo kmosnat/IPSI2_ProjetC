@@ -7,6 +7,14 @@
 
 #include <windows.h>
 
+enum class COULEUR
+{
+	RVB,
+	rouge,
+	vert,
+	bleu
+};
+
 class ClibIHM {
 
 	///////////////////////////////////////
@@ -16,9 +24,9 @@ private:
 	// data nécessaires à l'IHM donc fonction de l'application ciblée
 	int						nbDataImg; // nb champs Texte de l'IHM
 	std::vector<double>		dataFromImg; // champs Texte de l'IHM
-	CImageCouleur*          imgPt;       // 
-	CImageNdg*				imgNdgPt;     //
-	byte*					data;       // champs Texte de l'IHM
+	CImageCouleur* imgPt;       // 
+	CImageNdg* imgNdgPt;     //
+	byte* data;       // champs Texte de l'IHM
 	int NbLig;
 	int NbCol;
 	int stride;
@@ -54,7 +62,7 @@ public:
 
 	_declspec(dllexport) void runProcess(ClibIHM* pImgGt);
 
-	_declspec(dllexport) void persitData(CImageNdg pImg);
+	_declspec(dllexport) void persitData(CImageNdg* pImg, COULEUR couleur);
 
 };
 

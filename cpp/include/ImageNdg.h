@@ -10,8 +10,6 @@
 #include <vector>
 #include <string>
 
-#include "ImageClasse.h"
-
 typedef struct {
 	int		min;
 	int		max;

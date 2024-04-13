@@ -38,10 +38,14 @@
             menuStrip1 = new MenuStrip();
             fichierToolStripMenuItem = new ToolStripMenuItem();
             ouvrirDossierToolStripMenuItem = new ToolStripMenuItem();
+            iou_label = new Label();
+            vinet_label = new Label();
+            comparaison = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)image_db).BeginInit();
             ((System.ComponentModel.ISupportInitialize)image_gt).BeginInit();
             ((System.ComponentModel.ISupportInitialize)image_traitée).BeginInit();
             menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)comparaison).BeginInit();
             SuspendLayout();
             // 
             // image_db
@@ -85,7 +89,7 @@
             // image_traitée
             // 
             image_traitée.BorderStyle = BorderStyle.FixedSingle;
-            image_traitée.Location = new Point(917, 271);
+            image_traitée.Location = new Point(917, 405);
             image_traitée.Name = "image_traitée";
             image_traitée.Size = new Size(402, 389);
             image_traitée.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -98,7 +102,7 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { fichierToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(1565, 40);
+            menuStrip1.Size = new Size(1424, 40);
             menuStrip1.TabIndex = 12;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -116,11 +120,42 @@
             ouvrirDossierToolStripMenuItem.Text = "Ouvrir Dossier";
             ouvrirDossierToolStripMenuItem.Click += ouvrirDossierToolStripMenuItem_Click;
             // 
+            // iou_label
+            // 
+            iou_label.AutoSize = true;
+            iou_label.Location = new Point(917, 815);
+            iou_label.Name = "iou_label";
+            iou_label.Size = new Size(101, 32);
+            iou_label.TabIndex = 15;
+            iou_label.Text = "Iou (%) :";
+            // 
+            // vinet_label
+            // 
+            vinet_label.AutoSize = true;
+            vinet_label.Location = new Point(917, 875);
+            vinet_label.Name = "vinet_label";
+            vinet_label.Size = new Size(123, 32);
+            vinet_label.TabIndex = 16;
+            vinet_label.Text = "Vinet (%) :";
+            // 
+            // comparaison
+            // 
+            comparaison.BorderStyle = BorderStyle.FixedSingle;
+            comparaison.Location = new Point(981, 100);
+            comparaison.Name = "comparaison";
+            comparaison.Size = new Size(282, 257);
+            comparaison.SizeMode = PictureBoxSizeMode.StretchImage;
+            comparaison.TabIndex = 17;
+            comparaison.TabStop = false;
+            // 
             // ProjetC
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1565, 992);
+            ClientSize = new Size(1424, 956);
+            Controls.Add(comparaison);
+            Controls.Add(vinet_label);
+            Controls.Add(iou_label);
             Controls.Add(image_traitée);
             Controls.Add(image_gt);
             Controls.Add(treeView_in_sc);
@@ -134,6 +169,7 @@
             ((System.ComponentModel.ISupportInitialize)image_traitée).EndInit();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)comparaison).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -150,5 +186,8 @@
         private MenuStrip menuStrip1;
         private ToolStripMenuItem fichierToolStripMenuItem;
         private ToolStripMenuItem ouvrirDossierToolStripMenuItem;
+        private Label iou_label;
+        private Label vinet_label;
+        private PictureBox comparaison;
     }
 }

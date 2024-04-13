@@ -31,6 +31,7 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 	this->stride = stride;
 
 	imgPt = new CImageCouleur(nbLig, nbCol);
+	imgNdgPt = new CImageNdg(nbLig, nbCol);
 	if (!imgPt) {
 		throw std::runtime_error("Erreur allocation CImageCouleur");
 	}
@@ -45,31 +46,46 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 			imgPt->operator()(y, x)[0] = pixPtr[3 * x + 2]; // Bleu
 			imgPt->operator()(y, x)[1] = pixPtr[3 * x + 1]; // Vert
 			imgPt->operator()(y, x)[2] = pixPtr[3 * x];     // Rouge
+
+			// Conversion en niveau de gris
+			imgNdgPt->operator()(y, x) = (int)(0.299 * pixPtr[3 * x] + 0.587 * pixPtr[3 * x + 1] + 0.114 * pixPtr[3 * x + 2]);
 		}
 		pixPtr += stride;
 	}
 
-	imgNdgPt = new CImageNdg(imgPt->plan());
 	if (!imgNdgPt) {
 		delete imgPt;
 		throw std::runtime_error("Erreur allocation CImageNdg");
 	}
 }
 
-void ClibIHM::runProcess(ClibIHM* pImgGt)
+CImageNdg ClibIHM::toNdg()
 {
-	int seuilBas = 128;
-	int seuilHaut = 255;
-
-	CImageNdg whiteTopHat = this->imgNdgPt->whiteTopHat("disk", 3);
-
-	CImageNdg seuil = whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 3).morphologie("dilatation", "V8", 3);
-
+	CImageNdg imgNdg(NbLig, NbCol);
 	for (int y = 0; y < NbLig; y++)
 	{
 		for (int x = 0; x < NbCol; x++)
 		{
-			if (seuil(y, x) == 1)
+			if (this->imgNdgPt->operator()(y, x) == 255)
+			{
+				imgNdg(y, x) = 1;
+			}
+			else
+			{
+				imgNdg(y, x) = 0;
+			}
+		}
+	}
+	return imgNdg;
+}
+
+void ClibIHM::writeImage(CImageNdg data)
+{
+	for (int y = 0; y < NbLig; y++)
+	{
+		for (int x = 0; x < NbCol; x++)
+		{
+			if (data(y, x) == 1)
 			{
 				this->imgNdgPt->operator()(y, x) = 255;
 			}
@@ -79,9 +95,68 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 			}
 		}
 	}
+}
 
-	pImgGt->persitData(pImgGt->imgNdgPt, COULEUR::vert);
+void ClibIHM::runProcess(ClibIHM* pImgGt)
+{
+	int seuilBas = 0;
+	int seuilHaut = 255;
+
+	//correlataion
+	
+	CImageNdg whiteTopHat = this->imgNdgPt->transformation().whiteTopHat("disk", 17);
+
+	CImageNdg seuil = whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
+	CImageNdg GT = pImgGt->toNdg();
+	
+	this->writeImage(seuil);
+	this->compare(pImgGt);
+
 	this->persitData(this->imgNdgPt, COULEUR::rouge);
+}
+
+void ClibIHM::compare(ClibIHM* pImgGt)
+{
+	CImageCouleur out(NbLig, NbCol);
+
+	for (int y = 0; y < NbLig; y++)
+	{
+		for (int x = 0; x < NbCol; x++)
+		{
+			if (this->imgNdgPt->operator()(y, x) == pImgGt->imgNdgPt->operator()(y, x))
+			{
+				out(y, x)[0] = 0;
+				out(y, x)[1] = 255;
+				out(y, x)[2] = 0;
+			}
+			else
+			{
+				out(y, x)[0] = 255;
+				out(y, x)[1] = 0;
+				out(y, x)[2] = 0;
+			}
+			if (this->imgNdgPt->operator()(y, x) == 0 && pImgGt->imgNdgPt->operator()(y, x) == 0)
+			{
+				out(y, x)[0] = 0;
+				out(y, x)[1] = 0;
+				out(y, x)[2] = 0;
+
+			}
+		}
+	}
+
+	// Ecriture de l'image
+	byte* pixPtr = pImgGt->data;
+	for (int y = 0; y < NbLig; y++)
+	{
+		for (int x = 0; x < NbCol; x++)
+		{
+			pixPtr[3 * x + 2] = out(y, x)[0]; // Bleu
+			pixPtr[3 * x + 1] = out(y, x)[1]; // Vert
+			pixPtr[3 * x] = out(y, x)[2];	 // Rouge
+		}
+		pixPtr += stride;
+	}
 }
 
 

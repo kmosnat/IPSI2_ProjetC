@@ -60,7 +60,11 @@ public:
 		dataFromImg.at(i) = val;
 	}
 
+	_declspec(dllexport) CImageNdg toNdg();
+	_declspec(dllexport) void writeImage(CImageNdg img);
 	_declspec(dllexport) void runProcess(ClibIHM* pImgGt);
+
+	_declspec(dllexport) void compare(ClibIHM* pImgGt);
 
 	_declspec(dllexport) void persitData(CImageNdg* pImg, COULEUR couleur);
 

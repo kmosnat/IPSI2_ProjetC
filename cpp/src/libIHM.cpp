@@ -104,15 +104,16 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 
 	//correlataion
 	
-	CImageNdg whiteTopHat = this->imgNdgPt->transformation().whiteTopHat("disk", 17);
+	CImageNdg whiteTopHat = this->imgNdgPt->whiteTopHat("disk", 17);
 
 	CImageNdg seuil = whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
 	CImageNdg GT = pImgGt->toNdg();
 	
 	this->writeImage(seuil);
 	this->compare(pImgGt);
+	this->iou(pImgGt);
 
-	this->persitData(this->imgNdgPt, COULEUR::rouge);
+	this->persitData(this->imgNdgPt, COULEUR::RVB);
 }
 
 void ClibIHM::compare(ClibIHM* pImgGt)
@@ -157,6 +158,31 @@ void ClibIHM::compare(ClibIHM* pImgGt)
 		}
 		pixPtr += stride;
 	}
+}
+
+void ClibIHM::iou(ClibIHM* pImgGt)
+{
+	CImageNdg GT = pImgGt->toNdg();
+	CImageNdg img = this->toNdg();
+
+	int intersection = 0;
+	int union_ = 0;
+
+	for (int y = 0; y < NbLig; y++)
+	{
+		for (int x = 0; x < NbCol; x++)
+		{
+			if (img(y, x) == 1 && GT(y, x) == 1)
+			{
+				intersection++;
+			}
+			if (img(y, x) == 1 || GT(y, x) == 1)
+			{
+				union_++;
+			}
+		}
+	}
+	this->dataFromImg.at(0) = floor((((double)intersection / (double)union_)*100)*100)/100;
 }
 
 

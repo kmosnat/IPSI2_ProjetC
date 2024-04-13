@@ -65,6 +65,7 @@ public:
 	_declspec(dllexport) void runProcess(ClibIHM* pImgGt);
 
 	_declspec(dllexport) void compare(ClibIHM* pImgGt);
+	_declspec(dllexport) void iou(ClibIHM* pImgGt);
 
 	_declspec(dllexport) void persitData(CImageNdg* pImg, COULEUR couleur);
 

@@ -38,9 +38,15 @@
             menuStrip1 = new MenuStrip();
             fichierToolStripMenuItem = new ToolStripMenuItem();
             ouvrirDossierToolStripMenuItem = new ToolStripMenuItem();
+            filtreToolStripMenuItem = new ToolStripMenuItem();
+            rotationToolStripMenuItem = new ToolStripMenuItem();
             iou_label = new Label();
             vinet_label = new Label();
             comparaison = new PictureBox();
+            horaireToolStripMenuItem = new ToolStripMenuItem();
+            antihoraireToolStripMenuItem = new ToolStripMenuItem();
+            moyenToolStripMenuItem = new ToolStripMenuItem();
+            medianToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)image_db).BeginInit();
             ((System.ComponentModel.ISupportInitialize)image_gt).BeginInit();
             ((System.ComponentModel.ISupportInitialize)image_traitée).BeginInit();
@@ -99,10 +105,10 @@
             // menuStrip1
             // 
             menuStrip1.ImageScalingSize = new Size(32, 32);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { fichierToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { fichierToolStripMenuItem, filtreToolStripMenuItem, rotationToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(1424, 40);
+            menuStrip1.Size = new Size(1424, 42);
             menuStrip1.TabIndex = 12;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -110,7 +116,7 @@
             // 
             fichierToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { ouvrirDossierToolStripMenuItem });
             fichierToolStripMenuItem.Name = "fichierToolStripMenuItem";
-            fichierToolStripMenuItem.Size = new Size(104, 36);
+            fichierToolStripMenuItem.Size = new Size(104, 38);
             fichierToolStripMenuItem.Text = "Fichier";
             // 
             // ouvrirDossierToolStripMenuItem
@@ -119,6 +125,20 @@
             ouvrirDossierToolStripMenuItem.Size = new Size(298, 44);
             ouvrirDossierToolStripMenuItem.Text = "Ouvrir Dossier";
             ouvrirDossierToolStripMenuItem.Click += ouvrirDossierToolStripMenuItem_Click;
+            // 
+            // filtreToolStripMenuItem
+            // 
+            filtreToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { moyenToolStripMenuItem, medianToolStripMenuItem });
+            filtreToolStripMenuItem.Name = "filtreToolStripMenuItem";
+            filtreToolStripMenuItem.Size = new Size(87, 38);
+            filtreToolStripMenuItem.Text = "Filtre";
+            // 
+            // rotationToolStripMenuItem
+            // 
+            rotationToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { horaireToolStripMenuItem, antihoraireToolStripMenuItem });
+            rotationToolStripMenuItem.Name = "rotationToolStripMenuItem";
+            rotationToolStripMenuItem.Size = new Size(123, 38);
+            rotationToolStripMenuItem.Text = "Rotation";
             // 
             // iou_label
             // 
@@ -147,6 +167,30 @@
             comparaison.SizeMode = PictureBoxSizeMode.StretchImage;
             comparaison.TabIndex = 17;
             comparaison.TabStop = false;
+            // 
+            // horaireToolStripMenuItem
+            // 
+            horaireToolStripMenuItem.Name = "horaireToolStripMenuItem";
+            horaireToolStripMenuItem.Size = new Size(359, 44);
+            horaireToolStripMenuItem.Text = "horaire";
+            // 
+            // antihoraireToolStripMenuItem
+            // 
+            antihoraireToolStripMenuItem.Name = "antihoraireToolStripMenuItem";
+            antihoraireToolStripMenuItem.Size = new Size(359, 44);
+            antihoraireToolStripMenuItem.Text = "anti-horaire";
+            // 
+            // moyenToolStripMenuItem
+            // 
+            moyenToolStripMenuItem.Name = "moyenToolStripMenuItem";
+            moyenToolStripMenuItem.Size = new Size(359, 44);
+            moyenToolStripMenuItem.Text = "moyen";
+            // 
+            // medianToolStripMenuItem
+            // 
+            medianToolStripMenuItem.Name = "medianToolStripMenuItem";
+            medianToolStripMenuItem.Size = new Size(359, 44);
+            medianToolStripMenuItem.Text = "median";
             // 
             // ProjetC
             // 
@@ -189,5 +233,11 @@
         private Label iou_label;
         private Label vinet_label;
         private PictureBox comparaison;
+        private ToolStripMenuItem filtreToolStripMenuItem;
+        private ToolStripMenuItem rotationToolStripMenuItem;
+        private ToolStripMenuItem horaireToolStripMenuItem;
+        private ToolStripMenuItem moyenToolStripMenuItem;
+        private ToolStripMenuItem medianToolStripMenuItem;
+        private ToolStripMenuItem antihoraireToolStripMenuItem;
     }
 }

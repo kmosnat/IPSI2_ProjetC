@@ -11,85 +11,246 @@ using System.Drawing.Imaging;
 
 using System.Runtime.InteropServices;
 using libImage;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace POAT
 {
-    public partial class Form1 : Form
+    public partial class ProjetC : Form
     {
-        public Form1()
+        public ProjetC()
         {
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
+        private string sourceImagesPath;
+        private string groundTruthsImagePath;
 
+        private void AjouterNoeudsLnSn()
+        {
+            var noeud_ln = new TreeNode("In");
+            var noeud_sn = new TreeNode("Sc");
+
+            // Trie et groupe les clés de ImageList par préfixe
+            var groupedKeys = In_Sc_list.Images.Keys.Cast<string>()
+                                   .Select(key => new { Key = key, FileName = Path.GetFileNameWithoutExtension(key) })
+                                   .OrderBy(item => int.Parse(item.FileName.Substring(3)))
+                                   .GroupBy(item => item.FileName.StartsWith("In_"))
+                                   .ToList();
+
+            // Ajoute les nœuds enfants à leur noeud parent approprié
+            foreach (var group in groupedKeys)
+            {
+                var parent = group.Key ? noeud_ln : noeud_sn;
+                foreach (var item in group)
+                {
+                    int index = In_Sc_list.Images.Keys.IndexOf(item.Key);
+                    var child = new TreeNode(item.FileName) { ImageIndex = index, SelectedImageIndex = index };
+                    parent.Nodes.Add(child);
+                }
+            }
+
+            treeView_in_sc.Nodes.AddRange(new[] { noeud_ln, noeud_sn });
         }
 
-        private void buttonOuvrir_Click_1(object sender, EventArgs e)
+
+        private async void processImage()
         {
-            if (ouvrirImage.ShowDialog() == DialogResult.OK)
+            // Utilisation de Task.Run pour exécuter le traitement d'image de manière asynchrone et retourner les valeurs nécessaires
+            (Bitmap processedImage, Bitmap groundTruthImage, double iouValue, double vinetValue) = await Task.Run(() =>
             {
-                try
+                Bitmap bmp = new Bitmap(image_db.Image);
+                Bitmap bmpGt = new Bitmap(image_gt.Image);
+                ClImage Img = new ClImage();
+                ClImage ImgGT = new ClImage();
+
+                unsafe
                 {
-                    Bitmap bmp;
-                    Image img = Image.FromFile(ouvrirImage.FileName);
-                    bmp = new Bitmap(img);
+                    var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    var bmpDataGt = bmpGt.LockBits(new Rectangle(0, 0, bmpGt.Width, bmpGt.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
+                    Img.processPtr(ImgGT.objetLibDataImgPtr(2, bmpDataGt.Scan0, bmpDataGt.Stride, bmpGt.Height, bmpGt.Width));
 
-                    imageDepart.Width = bmp.Width;
-                    imageDepart.Height = bmp.Height;
-                    // pour centrer image dans panel
-                    if (imageDepart.Width < imageDepart.Width)
-                        imageDepart.Left = (imageDepart.Width - imageDepart.Width) / 2;
-
-                    if (imageDepart.Height < imageDepart.Height)
-                        imageDepart.Top = (imageDepart.Height - imageDepart.Height) / 2;
-
-                    imageDepart.Image = bmp;
-
-                    imageSeuillee.Hide();
-                    valeurSeuilAuto.Hide();
+                    bmp.UnlockBits(bmpData);
+                    bmpGt.UnlockBits(bmpDataGt);
                 }
-                catch
+
+                // Récupération des valeurs de performance à partir de l'objet Img
+                double iou = Img.objetLibValeurChamp(0);
+                double vinet = Img.objetLibValeurChamp(1);
+
+                return (bmp, bmpGt, iou, vinet);
+            });
+
+            // Mise à jour de l'interface utilisateur avec les valeurs retournées
+            iou_label.Text = $"Iou (%) : {iouValue}";
+            vinet_label.Text = $"Vinet (%) : {vinetValue}";
+            image_traitée.Image = processedImage;
+            comparaison.Image = groundTruthImage;
+        }
+
+        private void ouvrirDossierToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Choix du dossier contenant les images
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string selectedPath = folderBrowserDialog1.SelectedPath;
+                sourceImagesPath = Path.Combine(selectedPath, "Source_Images");
+                groundTruthsImagePath = Path.Combine(selectedPath, "Ground_truth");
+
+                // Charger toutes les images du dossier Source Images - bmp
+                string[] sourceImageFiles = Directory.GetFiles(sourceImagesPath, "*.bmp");
+                if (sourceImageFiles.Length > 0)
                 {
-                    MessageBox.Show("erreur !");
+                    foreach (string filePath in sourceImageFiles)
+                    {
+                        // Obtenez juste le nom du fichier sans le chemin
+                        string fileName = Path.GetFileName(filePath);
+
+                        // Ajoutez l'image à l'ImageList Ln_Sc
+                        In_Sc_list.Images.Add(fileName, Image.FromFile(filePath));
+                    }
+                    AjouterNoeudsLnSn();
+                }
+                else
+                {
+                    MessageBox.Show("Aucune image trouvée dans le dossier Source Images - bmp.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
-        private void bSeuillageAuto_Click(object sender, EventArgs e)
+        private void treeView_in_sc_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            // traitement donc transférer data bmp vers C++
-
-            imageSeuillee.Show();
-            valeurSeuilAuto.Show();
-
-            Bitmap bmp = new Bitmap(imageDepart.Image);
-            ClImage Img = new ClImage();
-
-            unsafe
+            // Vérifie si un nœud est sélectionné
+            if (e.Node != null)
             {
-                BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                Img.objetLibDataImgPtr(1, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-                // 1 champ texte retour C++, le seuil auto
-                bmp.UnlockBits(bmpData);
+                // Récupère le nom de l'image à partir du texte du nœud
+                string imageName = e.Node.Text;
+
+                // Construit le chemin complet de l'image dans le dossier Source Images
+                string sourceImagePath = Path.Combine(sourceImagesPath, imageName + ".bmp");
+
+                // Construit le chemin complet de l'image dans le dossier Ground truth
+                string groundTruthImagePath = Path.Combine(groundTruthsImagePath, imageName + ".bmp");
+
+                if (!File.Exists(sourceImagePath) || !File.Exists(groundTruthImagePath))
+                {
+                    MessageBox.Show("Les fichiers d'image correspondants n'existent pas.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Remise à zéro des images
+                image_db.Image = null;
+                image_gt.Image = null;
+                image_traitée.Image = null;
+                comparaison.Image = null;
+
+                //remise à zéro des labels
+                iou_label.Text = "Iou (%) : ";
+                vinet_label.Text = "Vinet (%) : ";
+
+                //affiche l'image dans le picturebox
+                image_db.Image = Image.FromFile(sourceImagePath);
+                image_gt.Image = Image.FromFile(groundTruthImagePath);
+
+                // Appel de la méthode processImage
+                processImage();
             }
 
-            valeurSeuilAuto.Text = Img.objetLibValeurChamp(0).ToString();
+        }
 
-            imageSeuillee.Width = bmp.Width;
-            imageSeuillee.Height = bmp.Height;
+        private int? GetKernel()
+        {
+            string input = Microsoft.VisualBasic.Interaction.InputBox("Entrez la taille du noyau (impair) : ", "Taille du noyau", "3");
+            int kernelSize;
 
-            // pour centrer image dans panel
-            if (imageSeuillee.Width < imageDepart.Width)
-                imageSeuillee.Left = (imageDepart.Width - imageSeuillee.Width) / 2;
+            if (int.TryParse(input, out kernelSize) && kernelSize % 2 == 1 && kernelSize > 0)
+            {
+                return kernelSize;
+            }
+            else
+            {
+                MessageBox.Show("La taille du noyau doit être un nombre impair positif.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+        }
 
-            if (imageSeuillee.Height < imageDepart.Height)
-                imageSeuillee.Top = (imageDepart.Height - imageSeuillee.Height) / 2;
 
-            // transférer C++ vers bmp
-            imageSeuillee.Image = bmp;
+        private void moyenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int? kernelSize = GetKernel();
+            if (kernelSize.HasValue && image_db.Image != null)
+            {
+                Bitmap processedImage = Task.Run(() =>
+                {
+                    Bitmap bmp = new Bitmap(image_db.Image);
+                    ClImage Img = new ClImage();
 
+                    unsafe
+                    {
+                        var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                        Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
+                        Img.meanFilterPtr(kernelSize.Value);
+
+                        bmp.UnlockBits(bmpData);
+                    }
+
+                    return bmp;
+                }).Result;
+
+                image_db.Image = processedImage;
+            }
+            processImage();
+        }
+
+
+        private void medianToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int? kernelSize = GetKernel();
+            if (kernelSize.HasValue && image_db.Image != null)
+            {
+                Bitmap processedImage = Task.Run(() =>
+                {
+                    Bitmap bmp = new Bitmap(image_db.Image);
+                    ClImage Img = new ClImage();
+
+                    unsafe
+                    {
+                        var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                        Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
+                        Img.medianFilterPtr(kernelSize.Value);
+
+                        bmp.UnlockBits(bmpData);
+                    }
+
+                    return bmp;
+                }).Result;
+
+                image_db.Image = processedImage;
+            }
+            processImage();
+        }
+
+        private void horaireToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // rotation horaire
+            image_db.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            image_gt.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            image_db.Refresh();
+            image_gt.Refresh();
+
+            processImage();
+
+        }
+
+        private void antihoraireToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // rotation antihoraire
+            image_db.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+            image_gt.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+            image_db.Refresh();
+            image_gt.Refresh();
+
+            processImage();
         }
     }
 }

@@ -47,6 +47,11 @@
             iou_label = new Label();
             vinet_label = new Label();
             comparaison = new PictureBox();
+            label_db = new Label();
+            label_gt = new Label();
+            label_imageTraitée = new Label();
+            label1 = new Label();
+            resetToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)image_db).BeginInit();
             ((System.ComponentModel.ISupportInitialize)image_gt).BeginInit();
             ((System.ComponentModel.ISupportInitialize)image_traitée).BeginInit();
@@ -57,7 +62,7 @@
             // image_db
             // 
             image_db.BorderStyle = BorderStyle.FixedSingle;
-            image_db.Location = new Point(370, 69);
+            image_db.Location = new Point(370, 100);
             image_db.Name = "image_db";
             image_db.Size = new Size(402, 389);
             image_db.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -86,7 +91,7 @@
             // image_gt
             // 
             image_gt.BorderStyle = BorderStyle.FixedSingle;
-            image_gt.Location = new Point(370, 529);
+            image_gt.Location = new Point(370, 538);
             image_gt.Name = "image_gt";
             image_gt.Size = new Size(402, 389);
             image_gt.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -96,7 +101,7 @@
             // image_traitée
             // 
             image_traitée.BorderStyle = BorderStyle.FixedSingle;
-            image_traitée.Location = new Point(917, 405);
+            image_traitée.Location = new Point(928, 461);
             image_traitée.Name = "image_traitée";
             image_traitée.Size = new Size(402, 389);
             image_traitée.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -106,10 +111,10 @@
             // menuStrip1
             // 
             menuStrip1.ImageScalingSize = new Size(32, 32);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { fichierToolStripMenuItem, filtreToolStripMenuItem, rotationToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { fichierToolStripMenuItem, filtreToolStripMenuItem, rotationToolStripMenuItem, resetToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(1424, 40);
+            menuStrip1.Size = new Size(1424, 42);
             menuStrip1.TabIndex = 12;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -131,77 +136,124 @@
             // 
             filtreToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { moyenToolStripMenuItem, medianToolStripMenuItem });
             filtreToolStripMenuItem.Name = "filtreToolStripMenuItem";
-            filtreToolStripMenuItem.Size = new Size(87, 36);
-            filtreToolStripMenuItem.Text = "Filtre";
+            filtreToolStripMenuItem.Size = new Size(97, 38);
+            filtreToolStripMenuItem.Text = "Filtres";
             // 
             // moyenToolStripMenuItem
             // 
             moyenToolStripMenuItem.Name = "moyenToolStripMenuItem";
-            moyenToolStripMenuItem.Size = new Size(227, 44);
-            moyenToolStripMenuItem.Text = "moyen";
+            moyenToolStripMenuItem.Size = new Size(228, 44);
+            moyenToolStripMenuItem.Text = "Moyen";
             moyenToolStripMenuItem.Click += moyenToolStripMenuItem_Click;
             // 
             // medianToolStripMenuItem
             // 
             medianToolStripMenuItem.Name = "medianToolStripMenuItem";
-            medianToolStripMenuItem.Size = new Size(227, 44);
-            medianToolStripMenuItem.Text = "median";
+            medianToolStripMenuItem.Size = new Size(228, 44);
+            medianToolStripMenuItem.Text = "Median";
             medianToolStripMenuItem.Click += medianToolStripMenuItem_Click;
             // 
             // rotationToolStripMenuItem
             // 
             rotationToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { horaireToolStripMenuItem, antihoraireToolStripMenuItem });
             rotationToolStripMenuItem.Name = "rotationToolStripMenuItem";
-            rotationToolStripMenuItem.Size = new Size(123, 36);
+            rotationToolStripMenuItem.Size = new Size(123, 38);
             rotationToolStripMenuItem.Text = "Rotation";
             // 
             // horaireToolStripMenuItem
             // 
             horaireToolStripMenuItem.Name = "horaireToolStripMenuItem";
-            horaireToolStripMenuItem.Size = new Size(272, 44);
-            horaireToolStripMenuItem.Text = "horaire";
+            horaireToolStripMenuItem.Size = new Size(359, 44);
+            horaireToolStripMenuItem.Text = "Horaire";
             horaireToolStripMenuItem.Click += horaireToolStripMenuItem_Click;
             // 
             // antihoraireToolStripMenuItem
             // 
             antihoraireToolStripMenuItem.Name = "antihoraireToolStripMenuItem";
-            antihoraireToolStripMenuItem.Size = new Size(272, 44);
-            antihoraireToolStripMenuItem.Text = "anti-horaire";
+            antihoraireToolStripMenuItem.Size = new Size(359, 44);
+            antihoraireToolStripMenuItem.Text = "Anti-Horaire";
             antihoraireToolStripMenuItem.Click += antihoraireToolStripMenuItem_Click;
             // 
             // iou_label
             // 
             iou_label.AutoSize = true;
-            iou_label.Location = new Point(917, 815);
+            iou_label.Location = new Point(948, 872);
             iou_label.Name = "iou_label";
-            iou_label.Size = new Size(101, 32);
+            iou_label.Size = new Size(60, 32);
             iou_label.TabIndex = 15;
-            iou_label.Text = "Iou (%) :";
+            iou_label.Text = "Iou :";
             // 
             // vinet_label
             // 
             vinet_label.AutoSize = true;
-            vinet_label.Location = new Point(917, 875);
+            vinet_label.Location = new Point(1154, 872);
             vinet_label.Name = "vinet_label";
-            vinet_label.Size = new Size(123, 32);
+            vinet_label.Size = new Size(82, 32);
             vinet_label.TabIndex = 16;
-            vinet_label.Text = "Vinet (%) :";
+            vinet_label.Text = "Vinet :";
             // 
             // comparaison
             // 
             comparaison.BorderStyle = BorderStyle.FixedSingle;
-            comparaison.Location = new Point(981, 100);
+            comparaison.Location = new Point(981, 117);
             comparaison.Name = "comparaison";
             comparaison.Size = new Size(282, 257);
             comparaison.SizeMode = PictureBoxSizeMode.StretchImage;
             comparaison.TabIndex = 17;
             comparaison.TabStop = false;
             // 
+            // label_db
+            // 
+            label_db.AutoSize = true;
+            label_db.Location = new Point(370, 65);
+            label_db.Name = "label_db";
+            label_db.Size = new Size(172, 32);
+            label_db.TabIndex = 18;
+            label_db.Text = "Image Source :";
+            // 
+            // label_gt
+            // 
+            label_gt.AutoSize = true;
+            label_gt.Location = new Point(370, 503);
+            label_gt.Name = "label_gt";
+            label_gt.Size = new Size(241, 32);
+            label_gt.TabIndex = 19;
+            label_gt.Text = "Image Ground Truth :";
+            // 
+            // label_imageTraitée
+            // 
+            label_imageTraitée.AutoSize = true;
+            label_imageTraitée.Location = new Point(928, 426);
+            label_imageTraitée.Name = "label_imageTraitée";
+            label_imageTraitée.Size = new Size(170, 32);
+            label_imageTraitée.TabIndex = 20;
+            label_imageTraitée.Text = "Image Traitée :";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(981, 82);
+            label1.Name = "label1";
+            label1.Size = new Size(166, 32);
+            label1.TabIndex = 21;
+            label1.Text = "Comparaison :";
+            // 
+            // resetToolStripMenuItem
+            // 
+            resetToolStripMenuItem.Name = "resetToolStripMenuItem";
+            resetToolStripMenuItem.Size = new Size(91, 38);
+            resetToolStripMenuItem.Text = "Reset";
+            resetToolStripMenuItem.Click += resetToolStripMenuItem_Click;
+            // 
             // ProjetC
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1424, 956);
+            Controls.Add(label1);
+            Controls.Add(label_imageTraitée);
+            Controls.Add(label_gt);
+            Controls.Add(label_db);
             Controls.Add(comparaison);
             Controls.Add(vinet_label);
             Controls.Add(iou_label);
@@ -244,5 +296,10 @@
         private ToolStripMenuItem moyenToolStripMenuItem;
         private ToolStripMenuItem medianToolStripMenuItem;
         private ToolStripMenuItem antihoraireToolStripMenuItem;
+        private Label label_db;
+        private Label label_gt;
+        private Label label_imageTraitée;
+        private Label label1;
+        private ToolStripMenuItem resetToolStripMenuItem;
     }
 }

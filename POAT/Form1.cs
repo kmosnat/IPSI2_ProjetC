@@ -82,8 +82,8 @@ namespace POAT
             });
 
             // Mise à jour de l'interface utilisateur avec les valeurs retournées
-            iou_label.Text = $"Iou (%) : {iouValue}";
-            vinet_label.Text = $"Vinet (%) : {vinetValue}";
+            iou_label.Text = $"Iou :  {iouValue} %";
+            vinet_label.Text = $"Vinet :  {vinetValue} %";
             image_traitée.Image = processedImage;
             comparaison.Image = groundTruthImage;
         }
@@ -145,8 +145,8 @@ namespace POAT
                 comparaison.Image = null;
 
                 //remise à zéro des labels
-                iou_label.Text = "Iou (%) : ";
-                vinet_label.Text = "Vinet (%) : ";
+                iou_label.Text = "Iou : ";
+                vinet_label.Text = "Vinet : ";
 
                 //affiche l'image dans le picturebox
                 image_db.Image = Image.FromFile(sourceImagePath);
@@ -251,6 +251,40 @@ namespace POAT
             image_gt.Refresh();
 
             processImage();
+        }
+
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode selectedNode = treeView_in_sc.SelectedNode;
+
+            if (selectedNode != null)
+            {
+                string imageName = selectedNode.Text;
+
+                string sourceImagePath = Path.Combine(sourceImagesPath, imageName + ".bmp");
+
+                string groundTruthImagePath = Path.Combine(groundTruthsImagePath, imageName + ".bmp");
+
+                if (!File.Exists(sourceImagePath) || !File.Exists(groundTruthImagePath))
+                {
+                    MessageBox.Show("The corresponding image files do not exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                image_db.Image = null;
+                image_gt.Image = null;
+                image_traitée.Image = null;
+                comparaison.Image = null;
+
+                iou_label.Text = "Iou : ";
+                vinet_label.Text = "Vinet : ";
+
+                image_db.Image = Image.FromFile(sourceImagePath);
+                image_gt.Image = Image.FromFile(groundTruthImagePath);
+
+                processImage();
+            }
+
         }
     }
 }

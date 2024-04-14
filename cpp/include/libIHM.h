@@ -71,7 +71,6 @@ public:
 	_declspec(dllexport) void iou(ClibIHM* pImgGt);
 
 	_declspec(dllexport) void persitData(CImageNdg* pImg, COULEUR couleur);
-	_declspec(dllexport) void persitDataNdg(CImageNdg* pImg, COULEUR couleur);
 };
 
 extern "C" _declspec(dllexport) ClibIHM* objetLib()

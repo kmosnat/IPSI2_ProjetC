@@ -127,12 +127,23 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 	int seuilBas = 0;
 	int seuilHaut = 255;
 	
-	CImageNdg whiteTopHat = this->imgNdgPt->transformation().whiteTopHat("disk", 17);
+	CImageNdg inv_whiteTopHat = this->imgNdgPt->transformation().whiteTopHat("disk", 17);
+	CImageNdg whiteTopHat = this->imgNdgPt->whiteTopHat("disk", 17);
 
+	CImageNdg inv_seuil = inv_whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
 	CImageNdg seuil = whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
+
 	CImageNdg GT = pImgGt->toBinaire();
-	
-	this->writeBinaryImage(seuil);
+
+	if (inv_seuil.correlation(GT) > seuil.correlation(GT))
+	{
+		this->writeBinaryImage(inv_seuil);
+	}
+	else
+	{
+		this->writeBinaryImage(seuil);
+	}
+
 	this->iou(pImgGt);
 	this->compare(pImgGt);
 

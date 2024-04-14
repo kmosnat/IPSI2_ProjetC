@@ -113,7 +113,7 @@ namespace POAT
                 }
                 else
                 {
-                    MessageBox.Show("Aucune image trouvée dans le dossier Source Images - bmp.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Aucune image trouvée dans le dossier Source_Images", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -134,7 +134,6 @@ namespace POAT
 
                 if (!File.Exists(sourceImagePath) || !File.Exists(groundTruthImagePath))
                 {
-                    MessageBox.Show("Les fichiers d'image correspondants n'existent pas.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -177,86 +176,97 @@ namespace POAT
 
         private void moyenToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int? kernelSize = GetKernel();
-            if (kernelSize.HasValue && image_db.Image != null)
+            if (treeView_in_sc.SelectedNode != null)
             {
-                Bitmap processedImage = Task.Run(() =>
+                int? kernelSize = GetKernel();
+                if (kernelSize.HasValue && image_db.Image != null)
                 {
-                    Bitmap bmp = new Bitmap(image_db.Image);
-                    ClImage Img = new ClImage();
-
-                    unsafe
+                    Bitmap processedImage = Task.Run(() =>
                     {
-                        var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                        Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-                        Img.meanFilterPtr(kernelSize.Value);
+                        Bitmap bmp = new Bitmap(image_db.Image);
+                        ClImage Img = new ClImage();
 
-                        bmp.UnlockBits(bmpData);
-                    }
+                        unsafe
+                        {
+                            var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                            Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
+                            Img.meanFilterPtr(kernelSize.Value);
 
-                    return bmp;
-                }).Result;
+                            bmp.UnlockBits(bmpData);
+                        }
 
-                image_db.Image = processedImage;
-            }
-            processImage();
+                        return bmp;
+                    }).Result;
+
+                    image_db.Image = processedImage;
+                }
+                processImage();
+            } 
         }
 
 
         private void medianToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int? kernelSize = GetKernel();
-            if (kernelSize.HasValue && image_db.Image != null)
+            if (treeView_in_sc.SelectedNode != null)
             {
-                Bitmap processedImage = Task.Run(() =>
+                int? kernelSize = GetKernel();
+                if (kernelSize.HasValue && image_db.Image != null)
                 {
-                    Bitmap bmp = new Bitmap(image_db.Image);
-                    ClImage Img = new ClImage();
-
-                    unsafe
+                    Bitmap processedImage = Task.Run(() =>
                     {
-                        var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                        Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-                        Img.medianFilterPtr(kernelSize.Value);
+                        Bitmap bmp = new Bitmap(image_db.Image);
+                        ClImage Img = new ClImage();
 
-                        bmp.UnlockBits(bmpData);
-                    }
+                        unsafe
+                        {
+                            var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                            Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
+                            Img.medianFilterPtr(kernelSize.Value);
 
-                    return bmp;
-                }).Result;
+                            bmp.UnlockBits(bmpData);
+                        }
 
-                image_db.Image = processedImage;
+                        return bmp;
+                    }).Result;
+
+                    image_db.Image = processedImage;
+                }
+                processImage();
             }
-            processImage();
         }
 
         private void horaireToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // rotation horaire
-            image_db.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
-            image_gt.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
-            image_db.Refresh();
-            image_gt.Refresh();
+            if (treeView_in_sc.SelectedNode != null)
+            {
+                // rotation horaire
+                image_db.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                image_gt.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                image_db.Refresh();
+                image_gt.Refresh();
 
-            processImage();
+                processImage();
+            }
 
         }
 
         private void antihoraireToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // rotation antihoraire
-            image_db.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
-            image_gt.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
-            image_db.Refresh();
-            image_gt.Refresh();
+            if (treeView_in_sc.SelectedNode != null)
+            {
+                // rotation antihoraire
+                image_db.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                image_gt.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                image_db.Refresh();
+                image_gt.Refresh();
 
-            processImage();
+                processImage();
+            }
         }
 
         private void resetToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode selectedNode = treeView_in_sc.SelectedNode;
-
             if (selectedNode != null)
             {
                 string imageName = selectedNode.Text;

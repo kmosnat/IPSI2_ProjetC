@@ -267,7 +267,7 @@ namespace POAT
 
                 if (!File.Exists(sourceImagePath) || !File.Exists(groundTruthImagePath))
                 {
-                    MessageBox.Show("The corresponding image files do not exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Les fichiers d'image correspondants n'existent pas.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 

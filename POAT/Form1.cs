@@ -53,13 +53,13 @@ namespace POAT
         }
 
 
-        private async void processImage(string Source, string Ground_Truth)
+        private async void processImage()
         {
             // Utilisation de Task.Run pour exécuter le traitement d'image de manière asynchrone et retourner les valeurs nécessaires
             (Bitmap processedImage, Bitmap groundTruthImage, double iouValue, double vinetValue) = await Task.Run(() =>
             {
-                Bitmap bmp = new Bitmap(Image.FromFile(Source));
-                Bitmap bmpGt = new Bitmap(Image.FromFile(Ground_Truth));
+                Bitmap bmp = new Bitmap(image_db.Image);
+                Bitmap bmpGt = new Bitmap(image_gt.Image);
                 ClImage Img = new ClImage();
                 ClImage ImgGT = new ClImage();
 
@@ -153,9 +153,44 @@ namespace POAT
                 image_gt.Image = Image.FromFile(groundTruthImagePath);
 
                 // Appel de la méthode processImage
-                processImage(sourceImagePath, groundTruthImagePath);
+                processImage();
             }
 
+        }
+
+        private void moyenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //filtre moyen
+
+
+        }
+
+        private void medianToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void horaireToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // rotation horaire
+            image_db.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            image_gt.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            image_db.Refresh();
+            image_gt.Refresh();
+
+            processImage();
+
+        }
+
+        private void antihoraireToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // rotation antihoraire
+            image_db.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+            image_gt.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+            image_db.Refresh();
+            image_gt.Refresh();
+
+            processImage();
         }
     }
 }

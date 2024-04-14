@@ -39,14 +39,14 @@
             fichierToolStripMenuItem = new ToolStripMenuItem();
             ouvrirDossierToolStripMenuItem = new ToolStripMenuItem();
             filtreToolStripMenuItem = new ToolStripMenuItem();
+            moyenToolStripMenuItem = new ToolStripMenuItem();
+            medianToolStripMenuItem = new ToolStripMenuItem();
             rotationToolStripMenuItem = new ToolStripMenuItem();
+            horaireToolStripMenuItem = new ToolStripMenuItem();
+            antihoraireToolStripMenuItem = new ToolStripMenuItem();
             iou_label = new Label();
             vinet_label = new Label();
             comparaison = new PictureBox();
-            horaireToolStripMenuItem = new ToolStripMenuItem();
-            antihoraireToolStripMenuItem = new ToolStripMenuItem();
-            moyenToolStripMenuItem = new ToolStripMenuItem();
-            medianToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)image_db).BeginInit();
             ((System.ComponentModel.ISupportInitialize)image_gt).BeginInit();
             ((System.ComponentModel.ISupportInitialize)image_traitée).BeginInit();
@@ -66,6 +66,7 @@
             // 
             // treeView_in_sc
             // 
+            treeView_in_sc.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             treeView_in_sc.ImageIndex = 0;
             treeView_in_sc.ImageList = In_Sc_list;
             treeView_in_sc.Location = new Point(16, 69);
@@ -108,7 +109,7 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { fichierToolStripMenuItem, filtreToolStripMenuItem, rotationToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(1424, 42);
+            menuStrip1.Size = new Size(1424, 40);
             menuStrip1.TabIndex = 12;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -116,7 +117,7 @@
             // 
             fichierToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { ouvrirDossierToolStripMenuItem });
             fichierToolStripMenuItem.Name = "fichierToolStripMenuItem";
-            fichierToolStripMenuItem.Size = new Size(104, 38);
+            fichierToolStripMenuItem.Size = new Size(104, 36);
             fichierToolStripMenuItem.Text = "Fichier";
             // 
             // ouvrirDossierToolStripMenuItem
@@ -130,15 +131,43 @@
             // 
             filtreToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { moyenToolStripMenuItem, medianToolStripMenuItem });
             filtreToolStripMenuItem.Name = "filtreToolStripMenuItem";
-            filtreToolStripMenuItem.Size = new Size(87, 38);
+            filtreToolStripMenuItem.Size = new Size(87, 36);
             filtreToolStripMenuItem.Text = "Filtre";
+            // 
+            // moyenToolStripMenuItem
+            // 
+            moyenToolStripMenuItem.Name = "moyenToolStripMenuItem";
+            moyenToolStripMenuItem.Size = new Size(227, 44);
+            moyenToolStripMenuItem.Text = "moyen";
+            moyenToolStripMenuItem.Click += moyenToolStripMenuItem_Click;
+            // 
+            // medianToolStripMenuItem
+            // 
+            medianToolStripMenuItem.Name = "medianToolStripMenuItem";
+            medianToolStripMenuItem.Size = new Size(227, 44);
+            medianToolStripMenuItem.Text = "median";
+            medianToolStripMenuItem.Click += medianToolStripMenuItem_Click;
             // 
             // rotationToolStripMenuItem
             // 
             rotationToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { horaireToolStripMenuItem, antihoraireToolStripMenuItem });
             rotationToolStripMenuItem.Name = "rotationToolStripMenuItem";
-            rotationToolStripMenuItem.Size = new Size(123, 38);
+            rotationToolStripMenuItem.Size = new Size(123, 36);
             rotationToolStripMenuItem.Text = "Rotation";
+            // 
+            // horaireToolStripMenuItem
+            // 
+            horaireToolStripMenuItem.Name = "horaireToolStripMenuItem";
+            horaireToolStripMenuItem.Size = new Size(272, 44);
+            horaireToolStripMenuItem.Text = "horaire";
+            horaireToolStripMenuItem.Click += horaireToolStripMenuItem_Click;
+            // 
+            // antihoraireToolStripMenuItem
+            // 
+            antihoraireToolStripMenuItem.Name = "antihoraireToolStripMenuItem";
+            antihoraireToolStripMenuItem.Size = new Size(272, 44);
+            antihoraireToolStripMenuItem.Text = "anti-horaire";
+            antihoraireToolStripMenuItem.Click += antihoraireToolStripMenuItem_Click;
             // 
             // iou_label
             // 
@@ -167,30 +196,6 @@
             comparaison.SizeMode = PictureBoxSizeMode.StretchImage;
             comparaison.TabIndex = 17;
             comparaison.TabStop = false;
-            // 
-            // horaireToolStripMenuItem
-            // 
-            horaireToolStripMenuItem.Name = "horaireToolStripMenuItem";
-            horaireToolStripMenuItem.Size = new Size(359, 44);
-            horaireToolStripMenuItem.Text = "horaire";
-            // 
-            // antihoraireToolStripMenuItem
-            // 
-            antihoraireToolStripMenuItem.Name = "antihoraireToolStripMenuItem";
-            antihoraireToolStripMenuItem.Size = new Size(359, 44);
-            antihoraireToolStripMenuItem.Text = "anti-horaire";
-            // 
-            // moyenToolStripMenuItem
-            // 
-            moyenToolStripMenuItem.Name = "moyenToolStripMenuItem";
-            moyenToolStripMenuItem.Size = new Size(359, 44);
-            moyenToolStripMenuItem.Text = "moyen";
-            // 
-            // medianToolStripMenuItem
-            // 
-            medianToolStripMenuItem.Name = "medianToolStripMenuItem";
-            medianToolStripMenuItem.Size = new Size(359, 44);
-            medianToolStripMenuItem.Text = "median";
             // 
             // ProjetC
             // 

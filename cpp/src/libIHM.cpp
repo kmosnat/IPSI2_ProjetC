@@ -59,7 +59,7 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 	}
 }
 
-CImageNdg ClibIHM::toNdg()
+CImageNdg ClibIHM::toBinaire()
 {
 	CImageNdg imgNdg(NbLig, NbCol);
 	for (int y = 0; y < NbLig; y++)
@@ -79,7 +79,7 @@ CImageNdg ClibIHM::toNdg()
 	return imgNdg;
 }
 
-void ClibIHM::writeImage(CImageNdg data)
+void ClibIHM::writeBinaryImage(CImageNdg data)
 {
 	for (int y = 0; y < NbLig; y++)
 	{
@@ -97,6 +97,31 @@ void ClibIHM::writeImage(CImageNdg data)
 	}
 }
 
+void ClibIHM::writeImage(CImageNdg img)
+{
+	for (int y = 0; y < NbLig; y++)
+	{
+		for (int x = 0; x < NbCol; x++)
+		{
+			this->imgNdgPt->operator()(y, x) = img(y, x);
+		}
+	}
+}
+
+void ClibIHM::filter(std::string methode, int kernel)
+{
+	if (methode == "moyen")
+	{
+		this->writeImage(this->imgNdgPt->filtrage("moyennage", kernel, kernel));
+	}
+	else if (methode == "median")
+	{
+		this->writeImage(this->imgNdgPt->filtrage("median", kernel, kernel));
+	}
+
+	this->persitData(this->imgNdgPt, COULEUR::RVB);
+}
+
 void ClibIHM::runProcess(ClibIHM* pImgGt)
 {
 	int seuilBas = 0;
@@ -105,9 +130,9 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 	CImageNdg whiteTopHat = this->imgNdgPt->transformation().whiteTopHat("disk", 17);
 
 	CImageNdg seuil = whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
-	CImageNdg GT = pImgGt->toNdg();
+	CImageNdg GT = pImgGt->toBinaire();
 	
-	this->writeImage(seuil);
+	this->writeBinaryImage(seuil);
 	this->iou(pImgGt);
 	this->compare(pImgGt);
 
@@ -160,8 +185,8 @@ void ClibIHM::compare(ClibIHM* pImgGt)
 
 void ClibIHM::iou(ClibIHM* pImgGt)
 {
-	CImageNdg GT = pImgGt->toNdg();
-	CImageNdg img = this->toNdg();
+	CImageNdg GT = pImgGt->toBinaire();
+	CImageNdg img = this->toBinaire();
 
 	int intersection = 0;
 	int union_ = 0;

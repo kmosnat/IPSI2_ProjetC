@@ -60,15 +60,18 @@ public:
 		dataFromImg.at(i) = val;
 	}
 
-	_declspec(dllexport) CImageNdg toNdg();
+	_declspec(dllexport) CImageNdg toBinaire();
+	_declspec(dllexport) void writeBinaryImage(CImageNdg img);
+
 	_declspec(dllexport) void writeImage(CImageNdg img);
+	_declspec(dllexport) void filter(std::string methode,int kernel);
 	_declspec(dllexport) void runProcess(ClibIHM* pImgGt);
 
 	_declspec(dllexport) void compare(ClibIHM* pImgGt);
 	_declspec(dllexport) void iou(ClibIHM* pImgGt);
 
 	_declspec(dllexport) void persitData(CImageNdg* pImg, COULEUR couleur);
-
+	_declspec(dllexport) void persitDataNdg(CImageNdg* pImg, COULEUR couleur);
 };
 
 extern "C" _declspec(dllexport) ClibIHM* objetLib()
@@ -80,6 +83,18 @@ extern "C" _declspec(dllexport) ClibIHM* objetLib()
 extern "C" _declspec(dllexport) ClibIHM* objetLibDataImg(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 {
 	ClibIHM* pImg = new ClibIHM(nbChamps, data, stride, nbLig, nbCol);
+	return pImg;
+}
+
+extern "C" _declspec(dllexport) ClibIHM * meanFilter(ClibIHM* pImg, int kernel)
+{
+	pImg->filter("moyen", kernel);
+	return pImg;
+}
+
+extern "C" _declspec(dllexport) ClibIHM * medianFilter(ClibIHM* pImg, int kernel)
+{
+	pImg->filter("median", kernel);
 	return pImg;
 }
 

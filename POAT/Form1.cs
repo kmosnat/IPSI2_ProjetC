@@ -158,16 +158,76 @@ namespace POAT
 
         }
 
+        private int? GetKernel()
+        {
+            string input = Microsoft.VisualBasic.Interaction.InputBox("Entrez la taille du noyau (impair) : ", "Taille du noyau", "3");
+            int kernelSize;
+
+            if (int.TryParse(input, out kernelSize) && kernelSize % 2 == 1 && kernelSize > 0)
+            {
+                return kernelSize;
+            }
+            else
+            {
+                MessageBox.Show("La taille du noyau doit être un nombre impair positif.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+        }
+
+
         private void moyenToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //filtre moyen
+            int? kernelSize = GetKernel();
+            if (kernelSize.HasValue && image_db.Image != null)
+            {
+                Bitmap processedImage = Task.Run(() =>
+                {
+                    Bitmap bmp = new Bitmap(image_db.Image);
+                    ClImage Img = new ClImage();
 
+                    unsafe
+                    {
+                        var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                        Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
+                        Img.meanFilterPtr(kernelSize.Value);
 
+                        bmp.UnlockBits(bmpData);
+                    }
+
+                    return bmp;
+                }).Result;
+
+                image_db.Image = processedImage;
+            }
+            processImage();
         }
+
 
         private void medianToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            int? kernelSize = GetKernel();
+            if (kernelSize.HasValue && image_db.Image != null)
+            {
+                Bitmap processedImage = Task.Run(() =>
+                {
+                    Bitmap bmp = new Bitmap(image_db.Image);
+                    ClImage Img = new ClImage();
 
+                    unsafe
+                    {
+                        var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                        Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
+                        Img.medianFilterPtr(kernelSize.Value);
+
+                        bmp.UnlockBits(bmpData);
+                    }
+
+                    return bmp;
+                }).Result;
+
+                image_db.Image = processedImage;
+            }
+            processImage();
         }
 
         private void horaireToolStripMenuItem_Click(object sender, EventArgs e)

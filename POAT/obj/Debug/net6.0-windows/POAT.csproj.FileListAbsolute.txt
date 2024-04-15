@@ -47,3 +47,4 @@ C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows
 C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows\POAT.genruntimeconfig.cache
 C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows\ref\POAT.dll
 C:\Devs\Sources\IPSI2\ProjetC++\POAT\obj\Debug\net6.0-windows\POAT.ProjetC.resources
+C:\Devs\Sources\IPSI2\ProjetC++\POAT\obj\Debug\net6.0-windows\POAT.ProgressForm.resources

@@ -127,13 +127,24 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 	int seuilBas = 0;
 	int seuilHaut = 255;
 	
-	CImageNdg whiteTopHat = this->imgNdgPt->transformation().whiteTopHat("disk", 17);
+	CImageNdg inv_whiteTopHat = this->imgNdgPt->transformation().whiteTopHat("disk", 17);
+	CImageNdg whiteTopHat = this->imgNdgPt->whiteTopHat("disk", 17);
 
+	CImageNdg inv_seuil = inv_whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
 	CImageNdg seuil = whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
+
 	CImageNdg GT = pImgGt->toBinaire();
-	
-	this->writeBinaryImage(seuil);
-	this->iou(pImgGt);
+
+	if (inv_seuil.correlation(GT) > seuil.correlation(GT))
+	{
+		this->writeBinaryImage(inv_seuil);
+	}
+	else
+	{
+		this->writeBinaryImage(seuil);
+	}
+
+	this->score(pImgGt);
 	this->compare(pImgGt);
 
 	this->persitData(this->imgNdgPt, COULEUR::RVB);
@@ -183,10 +194,11 @@ void ClibIHM::compare(ClibIHM* pImgGt)
 	}
 }
 
-void ClibIHM::iou(ClibIHM* pImgGt)
+void ClibIHM::score(ClibIHM* pImgGt)
 {
-	CImageNdg GT = pImgGt->toBinaire();
+	// Score IOU
 	CImageNdg img = this->toBinaire();
+	CImageNdg GT = pImgGt->toBinaire();
 
 	int intersection = 0;
 	int union_ = 0;
@@ -205,7 +217,48 @@ void ClibIHM::iou(ClibIHM* pImgGt)
 			}
 		}
 	}
-	this->dataFromImg.at(0) = floor((((double)intersection / (double)union_)*100)*100)/100;
+	this->dataFromImg.at(0) = floor(((double)intersection / (double)union_) * 10000) / 100;
+
+	// Score de Vinet
+	std::vector<SIGNATURE_Forme> st, sr;
+
+	CImageClasse lab(img, "V8");
+	CImageClasse labGT(GT, "V8");
+
+	st = lab.signatures();
+	sr = labGT.signatures();
+
+	int nt = st.size(), nr = sr.size();
+	int nm = min(nt, nr);
+	float totalArea = 0.0f, score = 0.0f;
+
+	for (int i = 0; i < nm; i++) {
+		SIGNATURE_Forme* bestchoice = &sr[0];
+		float minDis = distanceSQ(st[i], *bestchoice);
+
+		for (int j = 1; j < nr; j++) {
+			float currentDis = distanceSQ(st[i], sr[j]);
+			if (currentDis < minDis && sr[j].surface == st[i].surface) {
+				bestchoice = &sr[j];
+				minDis = currentDis;
+			}
+		}
+
+		SIGNATURE_Forme compareRegion = *bestchoice;
+		totalArea += st[i].rectEnglob_Hi * st[i].rectEnglob_Hj;
+		score += distanceSQ(st[i], compareRegion);
+	}
+
+	for (int i = nm; i < max(nt, nr); i++) {
+		if (i < nr) {
+			totalArea += sr[i].rectEnglob_Hi * sr[i].rectEnglob_Hj;
+		}
+		if (i < nt) {
+			totalArea += st[i].rectEnglob_Hi * st[i].rectEnglob_Hj;
+		}
+	}
+
+	this->dataFromImg.at(1) = floor((score / totalArea * 10000) / 100);
 }
 
 

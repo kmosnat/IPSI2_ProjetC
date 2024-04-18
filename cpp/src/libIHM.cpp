@@ -126,12 +126,34 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 {
 	int seuilBas = 0;
 	int seuilHaut = 255;
-	
-	CImageNdg inv_whiteTopHat = this->imgNdgPt->transformation().whiteTopHat("disk", 17);
-	CImageNdg whiteTopHat = this->imgNdgPt->whiteTopHat("disk", 17);
 
-	CImageNdg inv_seuil = inv_whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
-	CImageNdg seuil = whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
+	CImageNdg inv_whiteTopHat, whiteTopHat;
+
+	// Création et démarrage des threads pour calculer whiteTopHat et inv_whiteTopHat
+	std::thread th1([&] {
+		inv_whiteTopHat = this->imgNdgPt->transformation().whiteTopHat("disk", 17);
+		});
+	std::thread th2([&] {
+		whiteTopHat = this->imgNdgPt->whiteTopHat("disk", 17);
+		});
+
+	// Attendez que th1 et th2 terminent
+	th1.join();
+	th2.join();
+
+	CImageNdg inv_seuil, seuil;
+
+	// Utilisation des résultats dans de nouveaux threads
+	std::thread th3([&] {
+		inv_seuil = inv_whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
+		});
+	std::thread th4([&] {
+		seuil = whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
+		});
+
+	// Attendez que th3 et th4 terminent
+	th3.join();
+	th4.join();
 
 	CImageNdg GT = pImgGt->toBinaire();
 
@@ -149,6 +171,7 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 
 	this->persitData(this->imgNdgPt, COULEUR::RVB);
 }
+
 
 void ClibIHM::compare(ClibIHM* pImgGt)
 {

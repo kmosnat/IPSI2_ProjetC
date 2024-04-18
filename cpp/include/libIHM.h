@@ -6,6 +6,8 @@
 #include "ImageDouble.h"
 
 #include <windows.h>
+#include <thread>
+#include <vector>
 
 enum class COULEUR
 {

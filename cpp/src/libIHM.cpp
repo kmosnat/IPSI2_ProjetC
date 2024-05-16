@@ -223,65 +223,73 @@ void ClibIHM::score(ClibIHM* pImgGt)
 	CImageNdg img = this->toBinaire();
 	CImageNdg GT = pImgGt->toBinaire();
 
-	int intersection = 0;
-	int union_ = 0;
+	std::thread th1([&] {
+		int intersection = 0;
+		int union_ = 0;
 
-	for (int y = 0; y < NbLig; y++)
-	{
-		for (int x = 0; x < NbCol; x++)
+		for (int y = 0; y < NbLig; y++)
 		{
-			if (img(y, x) == 1 && GT(y, x) == 1)
+			for (int x = 0; x < NbCol; x++)
 			{
-				intersection++;
-			}
-			if (img(y, x) == 1 || GT(y, x) == 1)
-			{
-				union_++;
-			}
-		}
-	}
-	this->dataFromImg.at(0) = floor(((double)intersection / (double)union_) * 10000) / 100;
-
-	// Score de Vinet
-	std::vector<SIGNATURE_Forme> st, sr;
-
-	CImageClasse lab(img, "V8");
-	CImageClasse labGT(GT, "V8");
-
-	st = lab.signatures();
-	sr = labGT.signatures();
-
-	int nt = st.size(), nr = sr.size();
-	int nm = min(nt, nr);
-	float totalArea = 0.0f, score = 0.0f;
-
-	for (int i = 0; i < nm; i++) {
-		SIGNATURE_Forme* bestchoice = &sr[0];
-		float minDis = distanceSQ(st[i], *bestchoice);
-
-		for (int j = 1; j < nr; j++) {
-			float currentDis = distanceSQ(st[i], sr[j]);
-			if (currentDis < minDis && sr[j].surface == st[i].surface) {
-				bestchoice = &sr[j];
-				minDis = currentDis;
+				if (img(y, x) == 1 && GT(y, x) == 1)
+				{
+					intersection++;
+				}
+				if (img(y, x) == 1 || GT(y, x) == 1)
+				{
+					union_++;
+				}
 			}
 		}
+		this->dataFromImg.at(0) = floor(((double)intersection / (double)union_) * 10000) / 100;
+	});
 
-		SIGNATURE_Forme compareRegion = *bestchoice;
-		totalArea += st[i].rectEnglob_Hi * st[i].rectEnglob_Hj;
-		score += distanceSQ(st[i], compareRegion);
-	}
+	std::thread th2([&] {
+		// Score de Vinet
+		std::vector<SIGNATURE_Forme> st, sr;
 
-	for (int i = nm; i < max(nt, nr); i++) {
-		if (i < nr) {
-			totalArea += sr[i].rectEnglob_Hi * sr[i].rectEnglob_Hj;
-		}
-		if (i < nt) {
+		CImageClasse lab(img, "V8");
+		CImageClasse labGT(GT, "V8");
+
+		st = lab.signatures();
+		sr = labGT.signatures();
+
+		int nt = st.size(), nr = sr.size();
+		int nm = min(nt, nr);
+		float totalArea = 0.0f, score = 0.0f;
+
+		for (int i = 0; i < nm; i++) {
+			SIGNATURE_Forme* bestchoice = &sr[0];
+			float minDis = distanceSQ(st[i], *bestchoice);
+
+			for (int j = 1; j < nr; j++) {
+				float currentDis = distanceSQ(st[i], sr[j]);
+				if (currentDis < minDis && sr[j].surface == st[i].surface) {
+					bestchoice = &sr[j];
+					minDis = currentDis;
+				}
+			}
+
+			SIGNATURE_Forme compareRegion = *bestchoice;
 			totalArea += st[i].rectEnglob_Hi * st[i].rectEnglob_Hj;
+			score += distanceSQ(st[i], compareRegion);
 		}
-	}
 
-	this->dataFromImg.at(1) = floor((score / totalArea * 10000) / 100);
+		for (int i = nm; i < max(nt, nr); i++) {
+			if (i < nr) {
+				totalArea += sr[i].rectEnglob_Hi * sr[i].rectEnglob_Hj;
+			}
+			if (i < nt) {
+				totalArea += st[i].rectEnglob_Hi * st[i].rectEnglob_Hj;
+			}
+		}
+
+		this->dataFromImg.at(1) = floor((score / totalArea * 10000) / 100);
+	
+	});
+	
+	th1.join();
+	th2.join();
 }
 
 

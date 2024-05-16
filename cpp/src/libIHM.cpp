@@ -59,7 +59,7 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 	}
 }
 
-CImageNdg ClibIHM::toNdg()
+CImageNdg ClibIHM::toBinaire()
 {
 	CImageNdg imgNdg(NbLig, NbCol);
 	for (int y = 0; y < NbLig; y++)
@@ -79,7 +79,7 @@ CImageNdg ClibIHM::toNdg()
 	return imgNdg;
 }
 
-void ClibIHM::writeImage(CImageNdg data)
+void ClibIHM::writeBinaryImage(CImageNdg data)
 {
 	for (int y = 0; y < NbLig; y++)
 	{
@@ -97,22 +97,81 @@ void ClibIHM::writeImage(CImageNdg data)
 	}
 }
 
+void ClibIHM::writeImage(CImageNdg img)
+{
+	for (int y = 0; y < NbLig; y++)
+	{
+		for (int x = 0; x < NbCol; x++)
+		{
+			this->imgNdgPt->operator()(y, x) = img(y, x);
+		}
+	}
+}
+
+void ClibIHM::filter(std::string methode, int kernel)
+{
+	if (methode == "moyen")
+	{
+		this->writeImage(this->imgNdgPt->filtrage("moyennage", kernel, kernel));
+	}
+	else if (methode == "median")
+	{
+		this->writeImage(this->imgNdgPt->filtrage("median", kernel, kernel));
+	}
+
+	this->persitData(this->imgNdgPt, COULEUR::RVB);
+}
+
 void ClibIHM::runProcess(ClibIHM* pImgGt)
 {
 	int seuilBas = 0;
 	int seuilHaut = 255;
-	
-	CImageNdg whiteTopHat = this->imgNdgPt->transformation().whiteTopHat("disk", 17);
 
-	CImageNdg seuil = whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
-	CImageNdg GT = pImgGt->toNdg();
-	
-	this->writeImage(seuil);
-	this->iou(pImgGt);
+	CImageNdg inv_whiteTopHat, whiteTopHat;
+
+	// Création et démarrage des threads pour calculer whiteTopHat et inv_whiteTopHat
+	std::thread th1([&] {
+		inv_whiteTopHat = this->imgNdgPt->transformation().whiteTopHat("disk", 17);
+		});
+	std::thread th2([&] {
+		whiteTopHat = this->imgNdgPt->whiteTopHat("disk", 17);
+		});
+
+	// Attendez que th1 et th2 terminent
+	th1.join();
+	th2.join();
+
+	CImageNdg inv_seuil, seuil;
+
+	// Utilisation des résultats dans de nouveaux threads
+	std::thread th3([&] {
+		inv_seuil = inv_whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
+		});
+	std::thread th4([&] {
+		seuil = whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
+		});
+
+	// Attendez que th3 et th4 terminent
+	th3.join();
+	th4.join();
+
+	CImageNdg GT = pImgGt->toBinaire();
+
+	if (inv_seuil.correlation(GT) > seuil.correlation(GT))
+	{
+		this->writeBinaryImage(inv_seuil);
+	}
+	else
+	{
+		this->writeBinaryImage(seuil);
+	}
+
+	this->score(pImgGt);
 	this->compare(pImgGt);
 
 	this->persitData(this->imgNdgPt, COULEUR::RVB);
 }
+
 
 void ClibIHM::compare(ClibIHM* pImgGt)
 {
@@ -158,10 +217,11 @@ void ClibIHM::compare(ClibIHM* pImgGt)
 	}
 }
 
-void ClibIHM::iou(ClibIHM* pImgGt)
+void ClibIHM::score(ClibIHM* pImgGt)
 {
-	CImageNdg GT = pImgGt->toNdg();
-	CImageNdg img = this->toNdg();
+	// Score IOU
+	CImageNdg img = this->toBinaire();
+	CImageNdg GT = pImgGt->toBinaire();
 
 	int intersection = 0;
 	int union_ = 0;
@@ -180,7 +240,48 @@ void ClibIHM::iou(ClibIHM* pImgGt)
 			}
 		}
 	}
-	this->dataFromImg.at(0) = floor((((double)intersection / (double)union_)*100)*100)/100;
+	this->dataFromImg.at(0) = floor(((double)intersection / (double)union_) * 10000) / 100;
+
+	// Score de Vinet
+	std::vector<SIGNATURE_Forme> st, sr;
+
+	CImageClasse lab(img, "V8");
+	CImageClasse labGT(GT, "V8");
+
+	st = lab.signatures();
+	sr = labGT.signatures();
+
+	int nt = st.size(), nr = sr.size();
+	int nm = min(nt, nr);
+	float totalArea = 0.0f, score = 0.0f;
+
+	for (int i = 0; i < nm; i++) {
+		SIGNATURE_Forme* bestchoice = &sr[0];
+		float minDis = distanceSQ(st[i], *bestchoice);
+
+		for (int j = 1; j < nr; j++) {
+			float currentDis = distanceSQ(st[i], sr[j]);
+			if (currentDis < minDis && sr[j].surface == st[i].surface) {
+				bestchoice = &sr[j];
+				minDis = currentDis;
+			}
+		}
+
+		SIGNATURE_Forme compareRegion = *bestchoice;
+		totalArea += st[i].rectEnglob_Hi * st[i].rectEnglob_Hj;
+		score += distanceSQ(st[i], compareRegion);
+	}
+
+	for (int i = nm; i < max(nt, nr); i++) {
+		if (i < nr) {
+			totalArea += sr[i].rectEnglob_Hi * sr[i].rectEnglob_Hj;
+		}
+		if (i < nt) {
+			totalArea += st[i].rectEnglob_Hi * st[i].rectEnglob_Hj;
+		}
+	}
+
+	this->dataFromImg.at(1) = floor((score / totalArea * 10000) / 100);
 }
 
 

@@ -1,1 +1,4 @@
-﻿  libImage.vcxproj -> C:\Devs\Sources\IPSI2\ProjetC++\POAT\bin\Debug\net6.0-windows\libImage.dll
+﻿  libIHM.cpp
+C:\Devs\Sources\IPSI2\ProjetC++\cpp\src\libIHM.cpp(262,10): warning C4267: 'initialisation' : conversion de 'size_t' en 'int', perte possible de données
+C:\Devs\Sources\IPSI2\ProjetC++\cpp\src\libIHM.cpp(262,26): warning C4267: 'initialisation' : conversion de 'size_t' en 'int', perte possible de données
+  libImage.vcxproj -> C:\Devs\Sources\IPSI2\ProjetC++\POAT\bin\Debug\net6.0-windows\libImage.dll

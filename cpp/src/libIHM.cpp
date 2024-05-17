@@ -59,6 +59,51 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 	}
 }
 
+void ClibIHM::copyImage(CImageNdg img)
+{
+	for (int y = 0; y < NbLig; y++)
+	{
+		for (int x = 0; x < NbCol; x++)
+		{
+			this->imgNdgPt->operator()(y, x) = img(y, x);
+		}
+	}
+}
+
+void ClibIHM::writeImage(ClibIHM* img, CImageCouleur out)
+{
+	// Ecriture de l'image
+	byte* pixPtr = img->data;
+	for (int y = 0; y < NbLig; y++)
+	{
+		for (int x = 0; x < NbCol; x++)
+		{
+			pixPtr[3 * x + 2] = out(y, x)[0]; // Bleu
+			pixPtr[3 * x + 1] = out(y, x)[1]; // Vert
+			pixPtr[3 * x] = out(y, x)[2];	 // Rouge
+		}
+		pixPtr += stride;
+	}
+}
+
+void ClibIHM::writeBinaryImage(CImageNdg img)
+{
+	for (int y = 0; y < NbLig; y++)
+	{
+		for (int x = 0; x < NbCol; x++)
+		{
+			if (img(y, x) == 1)
+			{
+				this->imgNdgPt->operator()(y, x) = 255;
+			}
+			else
+			{
+				this->imgNdgPt->operator()(y, x) = 0;
+			}
+		}
+	}
+}
+
 CImageNdg ClibIHM::toBinaire()
 {
 	CImageNdg imgNdg(NbLig, NbCol);
@@ -79,44 +124,15 @@ CImageNdg ClibIHM::toBinaire()
 	return imgNdg;
 }
 
-void ClibIHM::writeBinaryImage(CImageNdg data)
-{
-	for (int y = 0; y < NbLig; y++)
-	{
-		for (int x = 0; x < NbCol; x++)
-		{
-			if (data(y, x) == 1)
-			{
-				this->imgNdgPt->operator()(y, x) = 255;
-			}
-			else
-			{
-				this->imgNdgPt->operator()(y, x) = 0;
-			}
-		}
-	}
-}
-
-void ClibIHM::writeImage(CImageNdg img)
-{
-	for (int y = 0; y < NbLig; y++)
-	{
-		for (int x = 0; x < NbCol; x++)
-		{
-			this->imgNdgPt->operator()(y, x) = img(y, x);
-		}
-	}
-}
-
 void ClibIHM::filter(std::string methode, int kernel)
 {
 	if (methode == "moyen")
 	{
-		this->writeImage(this->imgNdgPt->filtrage("moyennage", kernel, kernel));
+		this->copyImage(this->imgNdgPt->filtrage("moyennage", kernel, kernel));
 	}
 	else if (methode == "median")
 	{
-		this->writeImage(this->imgNdgPt->filtrage("median", kernel, kernel));
+		this->copyImage(this->imgNdgPt->filtrage("median", kernel, kernel));
 	}
 
 	this->persitData(this->imgNdgPt, COULEUR::RVB);
@@ -203,18 +219,7 @@ void ClibIHM::compare(ClibIHM* pImgGt)
 		}
 	}
 
-	// Ecriture de l'image
-	byte* pixPtr = pImgGt->data;
-	for (int y = 0; y < NbLig; y++)
-	{
-		for (int x = 0; x < NbCol; x++)
-		{
-			pixPtr[3 * x + 2] = out(y, x)[0]; // Bleu
-			pixPtr[3 * x + 1] = out(y, x)[1]; // Vert
-			pixPtr[3 * x] = out(y, x)[2];	 // Rouge
-		}
-		pixPtr += stride;
-	}
+	writeImage(pImgGt, out);
 }
 
 void ClibIHM::score(ClibIHM* pImgGt)
@@ -329,18 +334,7 @@ void ClibIHM::persitData(CImageNdg* pImg, COULEUR color)
 		}
 	}
 
-	// Ecriture de l'image
-	byte* pixPtr = this->data;
-	for (int y = 0; y < NbLig; y++)
-	{
-		for (int x = 0; x < NbCol; x++)
-		{
-			pixPtr[3 * x + 2] = out(y, x)[0]; // Bleu
-			pixPtr[3 * x + 1] = out(y, x)[1]; // Vert
-			pixPtr[3 * x] = out(y, x)[2];	 // Rouge
-		}
-		pixPtr += stride;
-	}
+	writeImage(this, out);
 }
 
 
@@ -350,7 +344,3 @@ ClibIHM::~ClibIHM() {
 		(*this->imgPt).~CImageCouleur(); 
 	this->dataFromImg.clear();
 }
-
-
-
-

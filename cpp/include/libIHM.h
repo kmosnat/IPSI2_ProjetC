@@ -6,6 +6,8 @@
 #include "ImageDouble.h"
 
 #include <windows.h>
+#include <thread>
+#include <vector>
 
 enum class COULEUR
 {
@@ -89,10 +91,12 @@ public:
 		dataFromImg.at(i) = val;
 	}
 
-	_declspec(dllexport) CImageNdg toBinaire();
+	_declspec(dllexport) void copyImage(CImageNdg img);
+	_declspec(dllexport) void writeImage(ClibIHM* img, CImageCouleur out);
 	_declspec(dllexport) void writeBinaryImage(CImageNdg img);
 
-	_declspec(dllexport) void writeImage(CImageNdg img);
+	_declspec(dllexport) CImageNdg toBinaire();
+
 	_declspec(dllexport) void filter(std::string methode,int kernel);
 	_declspec(dllexport) void runProcess(ClibIHM* pImgGt);
 

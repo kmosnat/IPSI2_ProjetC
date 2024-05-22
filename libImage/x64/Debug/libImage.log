@@ -1,6 +1,1 @@
-﻿  ImageNdg.cpp
-C:\Devs\Sources\IPSI2\ProjetC++\cpp\src\ImageNdg.cpp(267,12): warning C4267: '=' : conversion de 'size_t' en 'int', perte possible de données
-C:\Devs\Sources\IPSI2\ProjetC++\cpp\src\ImageNdg.cpp(750,21): warning C4566: le caractère représenté par le nom de caractère universel '\uFFFD' ne peut pas être représenté dans la page de codes actuelle (1252)
-C:\Devs\Sources\IPSI2\ProjetC++\cpp\src\ImageNdg.cpp(755,21): warning C4566: le caractère représenté par le nom de caractère universel '\uFFFD' ne peut pas être représenté dans la page de codes actuelle (1252)
-C:\Devs\Sources\IPSI2\ProjetC++\cpp\src\ImageNdg.cpp(895,9): warning C4101: 'correlation' : variable locale non référencée
-  libImage.vcxproj -> C:\Devs\Sources\IPSI2\ProjetC++\POAT\bin\Debug\net6.0-windows\libImage.dll
+﻿  libImage.vcxproj -> C:\Devs\Sources\IPSI2\ProjetC++\POAT\bin\Debug\net6.0-windows\libImage.dll

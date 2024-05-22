@@ -33,7 +33,7 @@ namespace POAT
             // Remise � z�ro des images
             image_db.Image = null;
             image_gt.Image = null;
-            image_trait�e.Image = null;
+            image_traitée.Image = null;
             img_comparaison.Image = null;
 
             //remise � z�ro des labels
@@ -108,7 +108,7 @@ namespace POAT
 
                 iou_label.Text = $"Iou :  {iouValue} %";
                 vinet_label.Text = $"Vinet :  {vinetValue} %";
-                image_trait�e.Image = processedImage;
+                image_traitée.Image = processedImage;
                 img_comparaison.Image = groundTruthImage;
 
                 this.Enabled = true;
@@ -269,7 +269,7 @@ namespace POAT
                 image_db.Refresh();
                 image_gt.Refresh();
 
-                image_trait�e.Image = null;
+                image_traitée.Image = null;
                 img_comparaison.Image = null;
 
                 //remise � z�ro des labels
@@ -291,7 +291,7 @@ namespace POAT
                 image_db.Refresh();
                 image_gt.Refresh();
 
-                image_trait�e.Image = null;
+                image_traitée.Image = null;
                 img_comparaison.Image = null;
 
                 //remise � z�ro des labels
@@ -339,12 +339,12 @@ namespace POAT
                 image_gt.Width *= 2;
                 image_gt.Height *= 2;
 
-                image_trait�e.Width *= 2;
-                image_trait�e.Height *= 2;
+                image_traitée.Width *= 2;
+                image_traitée.Height *= 2;
             }
         }
 
-        private void arri�reToolStripMenuItem_Click(object sender, EventArgs e)
+        private void arrièreToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (treeView_in_sc.SelectedNode != null)
             {
@@ -354,8 +354,8 @@ namespace POAT
                 image_gt.Width /= 2;
                 image_gt.Height /= 2;
 
-                image_trait�e.Width /= 2;
-                image_trait�e.Height /= 2;
+                image_traitée.Width /= 2;
+                image_traitée.Height /= 2;
             }
 
         }
@@ -367,14 +367,14 @@ namespace POAT
 
             // D�placer les PictureBox en fonction de la valeur de d�filement vertical
             image_gt.Top = -scrollValue_v;
-            image_trait�e.Top = -scrollValue_v;
+            image_traitée.Top = -scrollValue_v;
 
             // R�cup�rer la valeur du d�filement horizontal actuel
             int scrollValue_h = panel1.HorizontalScroll.Value;
 
             // D�placer les PictureBox en fonction de la valeur de d�filement horizontal
             image_gt.Left = -scrollValue_h;
-            image_trait�e.Left = -scrollValue_h;
+            image_traitée.Left = -scrollValue_h;
         }
     }
 }

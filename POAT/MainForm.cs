@@ -19,6 +19,7 @@ namespace POAT
         public ProjetC()
         {
             InitializeComponent();
+
         }
 
         private string sourceImagesPath = "";
@@ -30,7 +31,7 @@ namespace POAT
             image_db.Image = null;
             image_gt.Image = null;
             image_traitée.Image = null;
-            comparaison.Image = null;
+            img_comparaison.Image = null;
 
             //remise à zéro des labels
             iou_label.Text = "Iou : ";
@@ -105,7 +106,7 @@ namespace POAT
                 iou_label.Text = $"Iou :  {iouValue} %";
                 vinet_label.Text = $"Vinet :  {vinetValue} %";
                 image_traitée.Image = processedImage;
-                comparaison.Image = groundTruthImage;
+                img_comparaison.Image = groundTruthImage;
 
                 this.Enabled = true;
                 progressForm.CloseForm();
@@ -263,7 +264,7 @@ namespace POAT
                 image_gt.Refresh();
 
                 image_traitée.Image = null;
-                comparaison.Image = null;
+                img_comparaison.Image = null;
 
                 //remise à zéro des labels
                 iou_label.Text = "Iou : ";
@@ -285,7 +286,7 @@ namespace POAT
                 image_gt.Refresh();
 
                 image_traitée.Image = null;
-                comparaison.Image = null;
+                img_comparaison.Image = null;
 
                 //remise à zéro des labels
                 iou_label.Text = "Iou : ";
@@ -320,6 +321,54 @@ namespace POAT
                 processImage();
             }
 
+        }
+
+        private void avantToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (treeView_in_sc.SelectedNode != null)
+            {
+                image_db.Width *= 2;
+                image_db.Height *= 2;
+
+                image_gt.Width *= 2;
+                image_gt.Height *= 2;
+
+                image_traitée.Width *= 2;
+                image_traitée.Height *= 2;
+            }
+        }
+
+        private void arrièreToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (treeView_in_sc.SelectedNode != null)
+            {
+                image_db.Width /= 2;
+                image_db.Height /= 2;
+
+                image_gt.Width /= 2;
+                image_gt.Height /= 2;
+
+                image_traitée.Width /= 2;
+                image_traitée.Height /= 2;
+            }
+
+        }
+
+        private void panel1_Scroll(object sender, ScrollEventArgs e)
+        {
+            // Récupérer la valeur du défilement vertical actuel
+            int scrollValue_v = panel1.VerticalScroll.Value;
+
+            // Déplacer les PictureBox en fonction de la valeur de défilement vertical
+            image_gt.Top = -scrollValue_v;
+            image_traitée.Top = -scrollValue_v;
+
+            // Récupérer la valeur du défilement horizontal actuel
+            int scrollValue_h = panel1.HorizontalScroll.Value;
+
+            // Déplacer les PictureBox en fonction de la valeur de défilement horizontal
+            image_gt.Left = -scrollValue_h;
+            image_traitée.Left = -scrollValue_h;
         }
     }
 }

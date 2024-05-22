@@ -10,7 +10,7 @@
 
 #include "libIHM.h"
 
-ClibIHM::ClibIHM() {
+ClibIHM::ClibIHM() { //init de la classe ClibIHM
 
 	this->nbDataImg = 0;
 	this->dataFromImg.clear();

@@ -49,19 +49,19 @@ namespace libImage
         }
 
         [DllImport("libImage.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr meanFilter(IntPtr pImg, int size);
+        public static extern IntPtr meanFilter(IntPtr pImg, int size, string str);
 
-        public IntPtr meanFilterPtr(int size)
+        public IntPtr meanFilterPtr(int size, string str)
         {
-            return meanFilter(ClPtr, size);
+            return meanFilter(ClPtr, size, str);
         }
 
         [DllImport("libImage.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr medianFilter(IntPtr pImg, int size);
+        public static extern IntPtr medianFilter(IntPtr pImg, int size, string str);
 
-        public IntPtr medianFilterPtr(int size)
+        public IntPtr medianFilterPtr(int size, string str)
         {
-            return medianFilter(ClPtr, size);
+            return medianFilter(ClPtr, size, str);
         }
 
         [DllImport("libImage.dll", CallingConvention = CallingConvention.Cdecl)]

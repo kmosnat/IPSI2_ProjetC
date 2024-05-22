@@ -108,15 +108,15 @@ void ClibIHM::writeImage(CImageNdg img)
 	}
 }
 
-void ClibIHM::filter(std::string methode, int kernel)
+void ClibIHM::filter(std::string methode, int kernel,char* str)
 {
 	if (methode == "moyen")
 	{
-		this->writeImage(this->imgNdgPt->filtrage("moyennage", kernel, kernel));
+		this->writeImage(this->imgNdgPt->filtrage("moyennage", kernel, kernel, str));
 	}
 	else if (methode == "median")
 	{
-		this->writeImage(this->imgNdgPt->filtrage("median", kernel, kernel));
+		this->writeImage(this->imgNdgPt->filtrage("median", kernel, kernel, str));
 	}
 
 	this->persitData(this->imgNdgPt, COULEUR::RVB);

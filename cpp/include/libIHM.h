@@ -100,7 +100,7 @@ public:
 	_declspec(dllexport) void writeBinaryImage(CImageNdg img);
 
 	_declspec(dllexport) void writeImage(CImageNdg img); // opérateur de copie de l'image d'entrée
-	_declspec(dllexport) void filter(std::string methode,int kernel);
+	_declspec(dllexport) void filter(std::string methode,int kernel, char* str);
 	_declspec(dllexport) void runProcess(ClibIHM* pImgGt);
 
 	_declspec(dllexport) void compare(ClibIHM* pImgGt);
@@ -121,15 +121,15 @@ extern "C" _declspec(dllexport) ClibIHM* objetLibDataImg(int nbChamps, byte* dat
 	return pImg;
 }
 
-extern "C" _declspec(dllexport) ClibIHM * meanFilter(ClibIHM* pImg, int kernel)
+extern "C" _declspec(dllexport) ClibIHM * meanFilter(ClibIHM* pImg, int kernel, char* str)
 {
-	pImg->filter("moyen", kernel);
+	pImg->filter("moyen", kernel, str);
 	return pImg;
 }
 
-extern "C" _declspec(dllexport) ClibIHM * medianFilter(ClibIHM* pImg, int kernel)
+extern "C" _declspec(dllexport) ClibIHM * medianFilter(ClibIHM* pImg, int kernel, char* str)
 {
-	pImg->filter("median", kernel);
+	pImg->filter("median", kernel, str);
 	return pImg;
 }
 

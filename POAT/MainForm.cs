@@ -16,10 +16,13 @@ namespace POAT
 {
     public partial class ProjetC : Form
     {
+        ComboBox comboBoxFilterType = new ComboBox();
         public ProjetC()
         {
             InitializeComponent();
 
+            comboBoxFilterType.Items.AddRange(new string[] { "disk", "carre" });
+            comboBoxFilterType.SelectedIndex = 0; // Option par défaut
         }
 
         private string sourceImagesPath = "";
@@ -177,18 +180,16 @@ namespace POAT
 
         private int? getKernel()
         {
-            string input = Microsoft.VisualBasic.Interaction.InputBox("Entrez la taille du noyau (impair) : ", "Taille du noyau", "3");
-            int kernelSize;
+            var filter = new Filter();
+            filter.Show();
 
-            if (int.TryParse(input, out kernelSize) && kernelSize % 2 == 1 && kernelSize > 0)
+            while (filter != null)
             {
-                return kernelSize;
+
+
             }
-            else
-            {
-                MessageBox.Show("La taille du noyau doit être un nombre impair positif.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return null;
-            }
+
+            return 2;
         }
 
 
@@ -208,7 +209,8 @@ namespace POAT
                         {
                             var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
                             Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-                            Img.meanFilterPtr(kernelSize.Value);
+                            // a cahnger pour choisir le type d'élément struct
+                            Img.meanFilterPtr(kernelSize.Value, "disk");
 
                             bmp.UnlockBits(bmpData);
                         }
@@ -239,7 +241,8 @@ namespace POAT
                         {
                             var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
                             Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-                            Img.medianFilterPtr(kernelSize.Value);
+                            // a changer pour choisir le type d'élément struct
+                            Img.medianFilterPtr(kernelSize.Value, "disk");
 
                             bmp.UnlockBits(bmpData);
                         }

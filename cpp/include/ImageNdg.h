@@ -212,7 +212,7 @@ class CImageNdg {
 		_declspec(dllexport) double correlation(const CImageNdg& GroundTruth) const;
 
 		// filtrage
-		_declspec(dllexport) CImageNdg filtrage(const std::string& methode = "moyennage", int Ni = 3, int Nj = 3); // choix "moyennage" / "median"
+		_declspec(dllexport) CImageNdg filtrage(const std::string& methode = "moyennage", int Ni = 3, int Nj = 3,const std::string& str = "disk"); // choix "moyennage" / "median"
 
 };
 

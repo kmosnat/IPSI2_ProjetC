@@ -50,3 +50,4 @@ C:\Devs\Sources\IPSI2\ProjetC++\POAT\obj\Debug\net6.0-windows\POAT.ProgressForm.
 C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows\POAT.ProjetC.resources
 C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows\POAT.ProgressForm.resources
 C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows\POAT.Filter.resources
+C:\Devs\Sources\IPSI2\ProjetC++\POAT\obj\Debug\net6.0-windows\POAT.Filter.resources

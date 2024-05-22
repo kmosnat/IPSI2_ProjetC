@@ -20,13 +20,13 @@ namespace POAT
         public ProjetC()
         {
             InitializeComponent();
-
-            comboBoxFilterType.Items.AddRange(new string[] { "disk", "carre" });
-            comboBoxFilterType.SelectedIndex = 0; // Option par défaut
         }
 
         private string sourceImagesPath = "";
         private string groundTruthsImagePath = "";
+
+        private int kernelSize = 3;
+        private string structElement = "disk";  
 
         private void reset()
         {
@@ -178,18 +178,18 @@ namespace POAT
 
         }
 
-        private int? getKernel()
+        private void filterDialog()
         {
-            var filter = new Filter();
-            filter.Show();
-
-            while (filter != null)
+            // attendre la fin de la saisie dans FormFilter
+            using (Filter formFilter = new Filter())
             {
-
-
+                if (formFilter.ShowDialog() == DialogResult.OK)
+                {
+                    kernelSize = formFilter.getKernel();
+                    structElement = formFilter.getStr();
+                }
             }
 
-            return 2;
         }
 
 
@@ -197,8 +197,10 @@ namespace POAT
         {
             if (treeView_in_sc.SelectedNode != null)
             {
-                int? kernelSize = getKernel();
-                if (kernelSize.HasValue && image_db.Image != null)
+                // Appel de la méthode getKernel
+                filterDialog();
+
+                if (image_db.Image != null)
                 {
                     Bitmap processedImage = Task.Run(() =>
                     {
@@ -209,8 +211,8 @@ namespace POAT
                         {
                             var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
                             Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-                            // a cahnger pour choisir le type d'élément struct
-                            Img.meanFilterPtr(kernelSize.Value, "disk");
+                            // a changer pour choisir le type d'élément struct
+                            Img.meanFilterPtr(kernelSize, structElement);
 
                             bmp.UnlockBits(bmpData);
                         }
@@ -229,8 +231,9 @@ namespace POAT
         {
             if (treeView_in_sc.SelectedNode != null)
             {
-                int? kernelSize = getKernel();
-                if (kernelSize.HasValue && image_db.Image != null)
+                filterDialog();
+
+                if (image_db.Image != null)
                 {
                     Bitmap processedImage = Task.Run(() =>
                     {
@@ -242,7 +245,7 @@ namespace POAT
                             var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
                             Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
                             // a changer pour choisir le type d'élément struct
-                            Img.medianFilterPtr(kernelSize.Value, "disk");
+                            Img.medianFilterPtr(kernelSize, structElement);
 
                             bmp.UnlockBits(bmpData);
                         }

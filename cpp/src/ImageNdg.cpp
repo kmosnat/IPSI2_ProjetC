@@ -944,9 +944,7 @@ CImageNdg CImageNdg::filtrage(const std::string& methode, int Ni, int Nj,const s
 					}
 				}
 			}
-		}
-
-		if (str.compare("carre")==0)
+		} else if (str.compare("carre")==0)
 		{
 			int nbBordsi = Ni / 2;
 			int nbBordsj = Nj / 2;
@@ -969,45 +967,63 @@ CImageNdg CImageNdg::filtrage(const std::string& methode, int Ni, int Nj,const s
 					out(i, j) = (int)(moy / somme);
 				}
 		}
+		else {
+			int nbBordsi = Ni / 2;
+			int nbBordsj = Nj / 2;
+
+			for (int i = 0; i < this->lireHauteur(); i++)
+				for (int j = 0; j < this->lireLargeur(); j++) {
+					// gestion des bords
+					int dk = max(0, i - nbBordsi);
+					int fk = min(i + nbBordsi, this->lireHauteur() - 1);
+					int dl = max(0, j - nbBordsj);
+					int fl = min(j + nbBordsj, this->lireLargeur() - 1);
+
+					float somme = 0;
+					float moy = 0;
+					for (int k = dk; k <= fk; k++)
+						for (int l = dl; l <= fl; l++) {
+							moy += (float)this->operator()(k, l);
+							somme += 1;
+						}
+					out(i, j) = (int)(moy / somme);
+				}
+		}
 	}
-	else
+	else {
 		if (methode.compare("median") == 0) {
 
 			if (str.compare("disk") == 0)
 			{
-				
-					if (Ni == Nj && Ni % 2 == 1) {
-						int rayon = Ni / 2;
-						std::vector<int> voisinage;
+				if (Ni == Nj && Ni % 2 == 1) {
+					int rayon = Ni / 2;
+					std::vector<int> voisinage;
 
-						for (int i = 0; i < this->lireHauteur(); i++) {
-							for (int j = 0; j < this->lireLargeur(); j++) {
-								voisinage.clear(); // Réinitialisez le vecteur pour chaque pixel
+					for (int i = 0; i < this->lireHauteur(); i++) {
+						for (int j = 0; j < this->lireLargeur(); j++) {
+							voisinage.clear(); // Réinitialisez le vecteur pour chaque pixel
 
-								for (int di = -rayon; di <= rayon; di++) {
-									for (int dj = -rayon; dj <= rayon; dj++) {
-										if (di * di + dj * dj <= rayon * rayon) {
-											int k = i + di;
-											int l = j + dj;
-											if (k >= 0 && k < this->lireHauteur() && l >= 0 && l < this->lireLargeur()) {
-												voisinage.push_back(this->operator()(k, l)); // Ajoutez la valeur du pixel voisin au vecteur
-											}
+							for (int di = -rayon; di <= rayon; di++) {
+								for (int dj = -rayon; dj <= rayon; dj++) {
+
+									if (di * di + dj * dj <= rayon * rayon) {
+										int k = i + di;
+										int l = j + dj;
+										if (k >= 0 && k < this->lireHauteur() && l >= 0 && l < this->lireLargeur()) {
+											voisinage.push_back(this->operator()(k, l)); // Ajoutez la valeur du pixel voisin au vecteur
 										}
 									}
 								}
-
-								// Triez le vecteur pour trouver la médiane
-								std::sort(voisinage.begin(), voisinage.end());
-
-								// Assignez la médiane au pixel de sortie
-								out(i, j) = voisinage[voisinage.size() / 2];
 							}
-						}
-					
-				}
-			}
 
-			if (str.compare("carre")==0)
+							// Triez le vecteur pour trouver la médiane
+							std::sort(voisinage.begin(), voisinage.end());
+
+							// Assignez la médiane au pixel de sortie								out(i, j) = voisinage[voisinage.size() / 2];
+						}
+					}
+				}
+			} else if (str.compare("carre") == 0)
 			{
 				int nbBordsi = Ni / 2;
 				int nbBordsj = Nj / 2;
@@ -1045,7 +1061,41 @@ CImageNdg CImageNdg::filtrage(const std::string& methode, int Ni, int Nj,const s
 					}
 				}
 			}
+			else {
+				int nbBordsi = Ni / 2;
+				int nbBordsj = Nj / 2;
+
+				std::vector<int> voisinage;
+
+				for (int i = 0; i < this->lireHauteur(); i++)
+					for (int j = 0; j < this->lireLargeur(); j++) {
+						// gestion des bords
+						int dk = max(0, i - nbBordsi);
+						int fk = min(i + nbBordsi, this->lireHauteur() - 1);
+						int dl = max(0, j - nbBordsj);
+						int fl = min(j + nbBordsj, this->lireLargeur() - 1);
+
+						voisinage.resize((fk - dk + 1) * (fl - dl + 1));
+						int indMed = (fk - dk + 1) * (fl - dl + 1) / 2;
+
+						// empilement 
+						int indice = 0;
+						for (int k = dk; k <= fk; k++)
+							for (int l = dl; l <= fl; l++) {
+								voisinage.at(indice) = (int)this->operator()(k, l);
+								indice++;
+							}
+
+						// tri croissant
+						std::sort(voisinage.begin(), voisinage.end());
+
+						out(i, j) = voisinage.at(indMed);
+
+						voisinage.clear();
+					}
+			}
 		}
+	}
 
 	return out;
 }

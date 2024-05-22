@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\bin\Debug\net6.0-windows\libImage.dll</FullPath>
+      <FullPath>C:\Devs\Sources\IPSI2\ProjetC++\POAT\bin\Debug\net6.0-windows\libImage.dll</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

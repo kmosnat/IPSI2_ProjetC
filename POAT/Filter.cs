@@ -16,16 +16,16 @@ namespace POAT
         {
             InitializeComponent();
 
-            comboBox1.Items.Add("Par défaut");
-            comboBox1.Items.Add("Disque");
-            comboBox1.Items.Add("Carré");
+            comboBox.Items.Add("Par défaut");
+            comboBox.Items.Add("Disque");
+            comboBox.Items.Add("Carré");
 
-            comboBox1.SelectedIndex = 0;
+            comboBox.SelectedIndex = 0;
         }
 
-        private int getKernel()
+        public int getKernel()
         {
-            string value = textBox1.Text;
+            string value = kenelSizeTextBox.Text;
             int val = int.Parse(value);
 
             if (val % 2 == 1 && val > 0)
@@ -37,9 +37,9 @@ namespace POAT
 
         }
 
-        private string getStr()
+        public string getStr()
         {
-            int value = comboBox1.SelectedIndex;
+            int value = comboBox.SelectedIndex;
             switch (value)
             {
                 case 0: { return ""; }
@@ -52,12 +52,12 @@ namespace POAT
 
         private void button1_Click(object sender, EventArgs e)
         {
-            
+            this.DialogResult = DialogResult.OK;
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-
+            this.Close();
         }
     }
 }

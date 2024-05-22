@@ -177,6 +177,7 @@ namespace POAT
         private int? getKernel()
         {
             string input = Microsoft.VisualBasic.Interaction.InputBox("Entrez la taille du noyau (impair) : ", "Taille du noyau", "3");
+
             int kernelSize;
 
             if (int.TryParse(input, out kernelSize) && kernelSize % 2 == 1 && kernelSize > 0)
@@ -281,6 +282,7 @@ namespace POAT
                 // rotation antihoraire
                 image_db.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
                 image_gt.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+
                 image_db.Refresh();
                 image_gt.Refresh();
 

@@ -53,6 +53,8 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 		pixPtr += stride;
 	}
 
+
+
 	if (!imgNdgPt) {
 		delete imgPt;
 		throw std::runtime_error("Erreur allocation CImageNdg");
@@ -277,7 +279,7 @@ void ClibIHM::score(ClibIHM* pImgGt)
 
 			SIGNATURE_Forme compareRegion = *bestchoice;
 			totalArea += st[i].rectEnglob_Hi * st[i].rectEnglob_Hj;
-			score += distanceSQ(st[i], compareRegion);
+			score += distanceSQ(st[i], compareRegion) * localIoU(img, GT, compareRegion);
 		}
 
 		for (int i = nm; i < max(nt, nr); i++) {

@@ -920,6 +920,7 @@ CImageNdg CImageNdg::filtrage(const std::string& methode, int Ni, int Nj) {
 	out.m_bBinaire = this->m_bBinaire; // conservation du type
 		
 	if (methode.compare("moyennage") == 0) {	
+
 		int nbBordsi = Ni/2;
 		int nbBordsj = Nj/2;
 

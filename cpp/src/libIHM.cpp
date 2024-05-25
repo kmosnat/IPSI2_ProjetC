@@ -32,6 +32,7 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 
 	imgPt = new CImageCouleur(nbLig, nbCol);
 	imgNdgPt = new CImageNdg(nbLig, nbCol);
+
 	if (!imgPt) {
 		throw std::runtime_error("Erreur allocation CImageCouleur");
 	}
@@ -42,7 +43,7 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 	{
 		for (int x = 0; x < nbCol; x++)
 		{
-			// Récupération des valeurs RGB
+			// Rï¿½cupï¿½ration des valeurs RGB
 			imgPt->operator()(y, x)[0] = pixPtr[3 * x + 2]; // Bleu
 			imgPt->operator()(y, x)[1] = pixPtr[3 * x + 1]; // Vert
 			imgPt->operator()(y, x)[2] = pixPtr[3 * x];     // Rouge
@@ -53,12 +54,6 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 		pixPtr += stride;
 	}
 
-
-
-	if (!imgNdgPt) {
-		delete imgPt;
-		throw std::runtime_error("Erreur allocation CImageNdg");
-	}
 }
 
 void ClibIHM::copyImage(CImageNdg img)
@@ -147,7 +142,7 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 
 	CImageNdg inv_whiteTopHat, whiteTopHat;
 
-	// Création et démarrage des threads pour calculer whiteTopHat et inv_whiteTopHat
+	// Crï¿½ation et dï¿½marrage des threads pour calculer whiteTopHat et inv_whiteTopHat
 	std::thread th1([&] {
 		inv_whiteTopHat = this->imgNdgPt->transformation().whiteTopHat("disk", 17);
 		});
@@ -161,7 +156,7 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 
 	CImageNdg inv_seuil, seuil;
 
-	// Utilisation des résultats dans de nouveaux threads
+	// Utilisation des rï¿½sultats dans de nouveaux threads
 	std::thread th3([&] {
 		inv_seuil = inv_whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
 		});
@@ -228,70 +223,24 @@ void ClibIHM::score(ClibIHM* pImgGt)
 {
 	// Score IOU
 	CImageNdg img = this->toBinaire();
+	img.ecrireBinaire(true);
 	CImageNdg GT = pImgGt->toBinaire();
+	GT.ecrireBinaire(true);
 
 	std::thread th1([&] {
-		int intersection = 0;
-		int union_ = 0;
 
-		for (int y = 0; y < NbLig; y++)
-		{
-			for (int x = 0; x < NbCol; x++)
-			{
-				if (img(y, x) == 1 && GT(y, x) == 1)
-				{
-					intersection++;
-				}
-				if (img(y, x) == 1 || GT(y, x) == 1)
-				{
-					union_++;
-				}
-			}
-		}
-		this->dataFromImg.at(0) = floor(((double)intersection / (double)union_) * 10000) / 100;
+		double score = img.indicateurPerformance(GT, "iou");
+
+		this->dataFromImg.at(0) = floor(score * 10000) / 100;
 	});
 
 	std::thread th2([&] {
 		// Score de Vinet
-		std::vector<SIGNATURE_Forme> st, sr;
+		CImageClasse imgClasse(img, "V8");
 
-		CImageClasse lab(img, "V8");
-		CImageClasse labGT(GT, "V8");
+		double score = imgClasse.vinet(img, GT);
 
-		st = lab.signatures();
-		sr = labGT.signatures();
-
-		int nt = st.size(), nr = sr.size();
-		int nm = min(nt, nr);
-		float totalArea = 0.0f, score = 0.0f;
-
-		for (int i = 0; i < nm; i++) {
-			SIGNATURE_Forme* bestchoice = &sr[0];
-			float minDis = distanceSQ(st[i], *bestchoice);
-
-			for (int j = 1; j < nr; j++) {
-				float currentDis = distanceSQ(st[i], sr[j]);
-				if (currentDis < minDis && sr[j].surface == st[i].surface) {
-					bestchoice = &sr[j];
-					minDis = currentDis;
-				}
-			}
-
-			SIGNATURE_Forme compareRegion = *bestchoice;
-			totalArea += st[i].rectEnglob_Hi * st[i].rectEnglob_Hj;
-			score += distanceSQ(st[i], compareRegion) * localIoU(img, GT, compareRegion);
-		}
-
-		for (int i = nm; i < max(nt, nr); i++) {
-			if (i < nr) {
-				totalArea += sr[i].rectEnglob_Hi * sr[i].rectEnglob_Hj;
-			}
-			if (i < nt) {
-				totalArea += st[i].rectEnglob_Hi * st[i].rectEnglob_Hj;
-			}
-		}
-
-		this->dataFromImg.at(1) = floor((score / totalArea * 10000) / 100);
+		this->dataFromImg.at(1) = floor(score * 10000) / 100;
 	
 	});
 	

@@ -17,24 +17,6 @@ enum class COULEUR
 	bleu
 };
 
-float distanceSQ(SIGNATURE_Forme p1, SIGNATURE_Forme p2) {
-	return (p1.centreGravite_i - p2.centreGravite_i) * (p1.centreGravite_i - p2.centreGravite_i) + (p1.centreGravite_j - p2.centreGravite_j) * (p1.centreGravite_j - p2.centreGravite_j);
-}
-
-float localIoU(CImageNdg img, CImageNdg GT, SIGNATURE_Forme region) {
-	
-	unsigned int intersect = 0, uni = 0;
-	for (int i = region.rectEnglob_Hi; i < region.rectEnglob_Bi; i++) {
-		for (int j = region.rectEnglob_Hj; j < region.rectEnglob_Bj; j++) {
-			if (img.operator()(i, j) != 0 || GT.operator()(i, j) != 0)
-				uni++;
-			if (img.operator()(i, j) != 0 && GT.operator()(i, j) != 0)
-				intersect++;
-		}
-	}
-
-	return (float)intersect / uni;
-}
 
 class ClibIHM {
 
@@ -42,7 +24,7 @@ class ClibIHM {
 private:
 	///////////////////////////////////////
 
-	// data nécessaires à l'IHM donc fonction de l'application ciblée
+	// data nï¿½cessaires ï¿½ l'IHM donc fonction de l'application ciblï¿½e
 	int						nbDataImg; // nb champs Texte de l'IHM
 	std::vector<double>		dataFromImg; // champs Texte de l'IHM
 	CImageCouleur* imgPt;       // 
@@ -57,7 +39,7 @@ public:
 	///////////////////////////////////////
 
 	// constructeurs
-	_declspec(dllexport) ClibIHM(); // par défaut
+	_declspec(dllexport) ClibIHM(); // par dï¿½faut
 
 	_declspec(dllexport) ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol); // par image format bmp C#
 

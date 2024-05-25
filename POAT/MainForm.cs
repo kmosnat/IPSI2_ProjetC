@@ -16,6 +16,7 @@ namespace POAT
 {
     public partial class ProjetC : Form
     {
+        ComboBox comboBoxFilterType = new ComboBox();
         public ProjetC()
         {
             InitializeComponent();
@@ -24,15 +25,21 @@ namespace POAT
         private string sourceImagesPath = "";
         private string groundTruthsImagePath = "";
 
+        private int kernelSize = 3;
+        private string structElement = "disk";
+
         private void reset()
         {
-            // Remise à zéro des images
+            // Remise ï¿½ zï¿½ro des images
             image_db.Image = null;
             image_gt.Image = null;
-            image_traitée.Image = null;
-            comparaison.Image = null;
+            image_traitee.Image = null;
+            img_comparaison.Image = null;
 
-            //remise à zéro des labels
+            // Remise ï¿½ zï¿½ro du zoom
+
+
+            //remise ï¿½ zï¿½ro des labels
             iou_label.Text = "Iou : ";
             vinet_label.Text = "Vinet : ";
         }
@@ -42,14 +49,14 @@ namespace POAT
             var noeud_ln = new TreeNode("In");
             var noeud_sn = new TreeNode("Sc");
 
-            // Trie et groupe les clés de ImageList par préfixe
+            // Trie et groupe les clï¿½s de ImageList par prï¿½fixe
             var groupedKeys = In_Sc_list.Images.Keys.Cast<string>()
                                    .Select(key => new { Key = key, FileName = Path.GetFileNameWithoutExtension(key) })
                                    .OrderBy(item => int.Parse(item.FileName.Substring(3)))
                                    .GroupBy(item => item.FileName.StartsWith("In_"))
                                    .ToList();
 
-            // Ajoute les nœuds enfants à leur noeud parent approprié
+            // Ajoute les nï¿½uds enfants ï¿½ leur noeud parent appropriï¿½
             foreach (var group in groupedKeys)
             {
                 var parent = group.Key ? noeud_ln : noeud_sn;
@@ -104,8 +111,8 @@ namespace POAT
 
                 iou_label.Text = $"Iou :  {iouValue} %";
                 vinet_label.Text = $"Vinet :  {vinetValue} %";
-                image_traitée.Image = processedImage;
-                comparaison.Image = groundTruthImage;
+                image_traitee.Image = processedImage;
+                img_comparaison.Image = groundTruthImage;
 
                 this.Enabled = true;
                 progressForm.CloseForm();
@@ -131,24 +138,24 @@ namespace POAT
                         // Obtenez juste le nom du fichier sans le chemin
                         string fileName = Path.GetFileName(filePath);
 
-                        // Ajoutez l'image à l'ImageList Ln_Sc
+                        // Ajoutez l'image ï¿½ l'ImageList Ln_Sc
                         In_Sc_list.Images.Add(fileName, Image.FromFile(filePath));
                     }
                     AjouterNoeudsLnSn();
                 }
                 else
                 {
-                    MessageBox.Show("Aucune image trouvée dans le dossier Source_Images", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Aucune image trouvï¿½e dans le dossier Source_Images", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
         private void treeView_in_sc_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            // Vérifie si un nœud est sélectionné
+            // Vï¿½rifie si un nï¿½ud est sï¿½lectionnï¿½
             if (e.Node != null)
             {
-                // Récupère le nom de l'image à partir du texte du nœud
+                // Rï¿½cupï¿½re le nom de l'image ï¿½ partir du texte du nï¿½ud
                 string imageName = e.Node.Text;
 
                 // Construit le chemin complet de l'image dans le dossier Source Images
@@ -168,27 +175,24 @@ namespace POAT
                 image_db.Image = Image.FromFile(sourceImagePath);
                 image_gt.Image = Image.FromFile(groundTruthImagePath);
 
-                // Appel de la méthode processImage
+                // Appel de la mï¿½thode processImage
                 processImage();
             }
 
         }
 
-        private int? getKernel()
+        private void filterDialog()
         {
-            string input = Microsoft.VisualBasic.Interaction.InputBox("Entrez la taille du noyau (impair) : ", "Taille du noyau", "3");
-
-            int kernelSize;
-
-            if (int.TryParse(input, out kernelSize) && kernelSize % 2 == 1 && kernelSize > 0)
+            // attendre la fin de la saisie dans FormFilter
+            using (Filter formFilter = new Filter())
             {
-                return kernelSize;
+                if (formFilter.ShowDialog() == DialogResult.OK)
+                {
+                    kernelSize = formFilter.getKernel();
+                    structElement = formFilter.getStr();
+                }
             }
-            else
-            {
-                MessageBox.Show("La taille du noyau doit être un nombre impair positif.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return null;
-            }
+
         }
 
 
@@ -196,8 +200,10 @@ namespace POAT
         {
             if (treeView_in_sc.SelectedNode != null)
             {
-                int? kernelSize = getKernel();
-                if (kernelSize.HasValue && image_db.Image != null)
+                // Appel de la mï¿½thode getKernel
+                filterDialog();
+
+                if (image_db.Image != null)
                 {
                     Bitmap processedImage = Task.Run(() =>
                     {
@@ -208,7 +214,8 @@ namespace POAT
                         {
                             var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
                             Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-                            Img.meanFilterPtr(kernelSize.Value);
+                            // a changer pour choisir le type d'ï¿½lï¿½ment struct
+                            Img.meanFilterPtr(kernelSize, structElement);
 
                             bmp.UnlockBits(bmpData);
                         }
@@ -227,8 +234,9 @@ namespace POAT
         {
             if (treeView_in_sc.SelectedNode != null)
             {
-                int? kernelSize = getKernel();
-                if (kernelSize.HasValue && image_db.Image != null)
+                filterDialog();
+
+                if (image_db.Image != null)
                 {
                     Bitmap processedImage = Task.Run(() =>
                     {
@@ -239,7 +247,8 @@ namespace POAT
                         {
                             var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
                             Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-                            Img.medianFilterPtr(kernelSize.Value);
+                            // a changer pour choisir le type d'ï¿½lï¿½ment struct
+                            Img.medianFilterPtr(kernelSize, structElement);
 
                             bmp.UnlockBits(bmpData);
                         }
@@ -263,10 +272,10 @@ namespace POAT
                 image_db.Refresh();
                 image_gt.Refresh();
 
-                image_traitée.Image = null;
-                comparaison.Image = null;
+                image_traitee.Image = null;
+                img_comparaison.Image = null;
 
-                //remise à zéro des labels
+                //remise ï¿½ zï¿½ro des labels
                 iou_label.Text = "Iou : ";
                 vinet_label.Text = "Vinet : ";
 
@@ -282,14 +291,13 @@ namespace POAT
                 // rotation antihoraire
                 image_db.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
                 image_gt.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
-
                 image_db.Refresh();
                 image_gt.Refresh();
 
-                image_traitée.Image = null;
-                comparaison.Image = null;
+                image_traitee.Image = null;
+                img_comparaison.Image = null;
 
-                //remise à zéro des labels
+                //remise ï¿½ zï¿½ro des labels
                 iou_label.Text = "Iou : ";
                 vinet_label.Text = "Vinet : ";
 
@@ -322,6 +330,55 @@ namespace POAT
                 processImage();
             }
 
+        }
+
+        private void avantToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (treeView_in_sc.SelectedNode != null)
+            {
+                image_db.Width *= 2;
+                image_db.Height *= 2;
+
+                image_gt.Width *= 2;
+                image_gt.Height *= 2;
+
+                image_traitee.Width *= 2;
+                image_traitee.Height *= 2;
+            }
+        }
+
+        private void arriÃ¨reToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (treeView_in_sc.SelectedNode != null)
+            {
+                image_db.Width /= 2;
+                image_db.Height /= 2;
+
+                image_gt.Width /= 2;
+                image_gt.Height /= 2;
+
+                image_traitee.Width /= 2;
+                image_traitee.Height /= 2;
+            }
+
+        }
+
+        private void panel1_Scroll(object sender, ScrollEventArgs e)
+        {
+            // Rï¿½cupï¿½rer la valeur du dï¿½filement vertical actuel
+            int scrollValue_v = panel1.VerticalScroll.Value;
+
+            // Dï¿½placer les PictureBox en fonction de la valeur de dï¿½filement vertical
+            image_gt.Top = -scrollValue_v;
+            image_traitee.Top = -scrollValue_v;
+
+
+            // Rï¿½cupï¿½rer la valeur du dï¿½filement horizontal actuel
+            int scrollValue_h = panel1.HorizontalScroll.Value;
+
+            // Dï¿½placer les PictureBox en fonction de la valeur de dï¿½filement horizontal
+            image_gt.Left = -scrollValue_h;
+            image_traitee.Left = -scrollValue_h;
         }
     }
 }

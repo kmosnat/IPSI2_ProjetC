@@ -34,7 +34,6 @@ C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\bin\Debug\net6.0-windows
 C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\bin\Debug\net6.0-windows\POAT.runtimeconfig.json
 C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\bin\Debug\net6.0-windows\POAT.dll
 C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\bin\Debug\net6.0-windows\POAT.pdb
-C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows\POAT.Form1.resources
 C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows\POAT.csproj.GenerateResource.cache
 C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows\POAT.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows\POAT.AssemblyInfoInputs.cache
@@ -48,3 +47,7 @@ C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows
 C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows\ref\POAT.dll
 C:\Devs\Sources\IPSI2\ProjetC++\POAT\obj\Debug\net6.0-windows\POAT.ProjetC.resources
 C:\Devs\Sources\IPSI2\ProjetC++\POAT\obj\Debug\net6.0-windows\POAT.ProgressForm.resources
+C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows\POAT.ProjetC.resources
+C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows\POAT.ProgressForm.resources
+C:\Users\Chloé\Documents\projet C++\IPSI2_ProjetC\POAT\obj\Debug\net6.0-windows\POAT.Filter.resources
+C:\Devs\Sources\IPSI2\ProjetC++\POAT\obj\Debug\net6.0-windows\POAT.Filter.resources

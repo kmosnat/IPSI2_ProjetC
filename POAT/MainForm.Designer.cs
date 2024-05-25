@@ -34,7 +34,7 @@
             In_Sc_list = new ImageList(components);
             folderBrowserDialog1 = new FolderBrowserDialog();
             image_gt = new PictureBox();
-            image_traitée = new PictureBox();
+            image_traitee = new PictureBox();
             menuStrip1 = new MenuStrip();
             fichierToolStripMenuItem = new ToolStripMenuItem();
             ouvrirDossierToolStripMenuItem = new ToolStripMenuItem();
@@ -61,7 +61,7 @@
             panel4 = new Panel();
             ((System.ComponentModel.ISupportInitialize)image_db).BeginInit();
             ((System.ComponentModel.ISupportInitialize)image_gt).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)image_traitée).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)image_traitee).BeginInit();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)img_comparaison).BeginInit();
             panel1.SuspendLayout();
@@ -73,10 +73,9 @@
             // image_db
             // 
             image_db.BorderStyle = BorderStyle.FixedSingle;
-            image_db.Location = new Point(2, 2);
-            image_db.Margin = new Padding(2);
+            image_db.Location = new Point(3, 3);
             image_db.Name = "image_db";
-            image_db.Size = new Size(291, 281);
+            image_db.Size = new Size(378, 359);
             image_db.SizeMode = PictureBoxSizeMode.StretchImage;
             image_db.TabIndex = 7;
             image_db.TabStop = false;
@@ -86,10 +85,11 @@
             treeView_in_sc.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             treeView_in_sc.ImageIndex = 0;
             treeView_in_sc.ImageList = In_Sc_list;
-            treeView_in_sc.Location = new Point(12, 54);
+            treeView_in_sc.Location = new Point(16, 69);
+            treeView_in_sc.Margin = new Padding(4, 4, 4, 4);
             treeView_in_sc.Name = "treeView_in_sc";
             treeView_in_sc.SelectedImageIndex = 0;
-            treeView_in_sc.Size = new Size(182, 671);
+            treeView_in_sc.Size = new Size(235, 858);
             treeView_in_sc.TabIndex = 8;
             treeView_in_sc.AfterSelect += treeView_in_sc_AfterSelect;
             // 
@@ -102,24 +102,22 @@
             // image_gt
             // 
             image_gt.BorderStyle = BorderStyle.FixedSingle;
-            image_gt.Location = new Point(2, 2);
-            image_gt.Margin = new Padding(2);
+            image_gt.Location = new Point(3, 3);
             image_gt.Name = "image_gt";
-            image_gt.Size = new Size(291, 281);
+            image_gt.Size = new Size(378, 359);
             image_gt.SizeMode = PictureBoxSizeMode.StretchImage;
             image_gt.TabIndex = 10;
             image_gt.TabStop = false;
             // 
-            // image_traitée
+            // image_traitee
             // 
-            image_traitée.BorderStyle = BorderStyle.FixedSingle;
-            image_traitée.Location = new Point(2, 0);
-            image_traitée.Margin = new Padding(2);
-            image_traitée.Name = "image_traitée";
-            image_traitée.Size = new Size(291, 281);
-            image_traitée.SizeMode = PictureBoxSizeMode.StretchImage;
-            image_traitée.TabIndex = 11;
-            image_traitée.TabStop = false;
+            image_traitee.BorderStyle = BorderStyle.FixedSingle;
+            image_traitee.Location = new Point(3, 0);
+            image_traitee.Name = "image_traitee";
+            image_traitee.Size = new Size(378, 359);
+            image_traitee.SizeMode = PictureBoxSizeMode.StretchImage;
+            image_traitee.TabIndex = 11;
+            image_traitee.TabStop = false;
             // 
             // menuStrip1
             // 
@@ -127,8 +125,8 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { fichierToolStripMenuItem, filtreToolStripMenuItem, rotationToolStripMenuItem, zoomToolStripMenuItem, resetToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Padding = new Padding(5, 2, 0, 2);
-            menuStrip1.Size = new Size(1095, 33);
+            menuStrip1.Padding = new Padding(6, 3, 0, 3);
+            menuStrip1.Size = new Size(1424, 42);
             menuStrip1.TabIndex = 12;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -136,13 +134,13 @@
             // 
             fichierToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { ouvrirDossierToolStripMenuItem });
             fichierToolStripMenuItem.Name = "fichierToolStripMenuItem";
-            fichierToolStripMenuItem.Size = new Size(78, 29);
+            fichierToolStripMenuItem.Size = new Size(104, 36);
             fichierToolStripMenuItem.Text = "Fichier";
             // 
             // ouvrirDossierToolStripMenuItem
             // 
             ouvrirDossierToolStripMenuItem.Name = "ouvrirDossierToolStripMenuItem";
-            ouvrirDossierToolStripMenuItem.Size = new Size(250, 34);
+            ouvrirDossierToolStripMenuItem.Size = new Size(330, 44);
             ouvrirDossierToolStripMenuItem.Text = "Ouvrir un dossier";
             ouvrirDossierToolStripMenuItem.Click += ouvrirDossierToolStripMenuItem_Click;
             // 
@@ -150,20 +148,20 @@
             // 
             filtreToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { moyenToolStripMenuItem, medianToolStripMenuItem });
             filtreToolStripMenuItem.Name = "filtreToolStripMenuItem";
-            filtreToolStripMenuItem.Size = new Size(74, 29);
+            filtreToolStripMenuItem.Size = new Size(97, 36);
             filtreToolStripMenuItem.Text = "Filtres";
             // 
             // moyenToolStripMenuItem
             // 
             moyenToolStripMenuItem.Name = "moyenToolStripMenuItem";
-            moyenToolStripMenuItem.Size = new Size(173, 34);
+            moyenToolStripMenuItem.Size = new Size(228, 44);
             moyenToolStripMenuItem.Text = "Moyen";
             moyenToolStripMenuItem.Click += moyenToolStripMenuItem_Click;
             // 
             // medianToolStripMenuItem
             // 
             medianToolStripMenuItem.Name = "medianToolStripMenuItem";
-            medianToolStripMenuItem.Size = new Size(173, 34);
+            medianToolStripMenuItem.Size = new Size(228, 44);
             medianToolStripMenuItem.Text = "Median";
             medianToolStripMenuItem.Click += medianToolStripMenuItem_Click;
             // 
@@ -171,20 +169,20 @@
             // 
             rotationToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { horaireToolStripMenuItem, antihoraireToolStripMenuItem });
             rotationToolStripMenuItem.Name = "rotationToolStripMenuItem";
-            rotationToolStripMenuItem.Size = new Size(95, 29);
+            rotationToolStripMenuItem.Size = new Size(123, 36);
             rotationToolStripMenuItem.Text = "Rotation";
             // 
             // horaireToolStripMenuItem
             // 
             horaireToolStripMenuItem.Name = "horaireToolStripMenuItem";
-            horaireToolStripMenuItem.Size = new Size(211, 34);
+            horaireToolStripMenuItem.Size = new Size(278, 44);
             horaireToolStripMenuItem.Text = "Horaire";
             horaireToolStripMenuItem.Click += horaireToolStripMenuItem_Click;
             // 
             // antihoraireToolStripMenuItem
             // 
             antihoraireToolStripMenuItem.Name = "antihoraireToolStripMenuItem";
-            antihoraireToolStripMenuItem.Size = new Size(211, 34);
+            antihoraireToolStripMenuItem.Size = new Size(278, 44);
             antihoraireToolStripMenuItem.Text = "Anti-Horaire";
             antihoraireToolStripMenuItem.Click += antihoraireToolStripMenuItem_Click;
             // 
@@ -192,57 +190,54 @@
             // 
             zoomToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { avantToolStripMenuItem, arrièreToolStripMenuItem });
             zoomToolStripMenuItem.Name = "zoomToolStripMenuItem";
-            zoomToolStripMenuItem.Size = new Size(76, 29);
+            zoomToolStripMenuItem.Size = new Size(97, 36);
             zoomToolStripMenuItem.Text = "Zoom";
             // 
             // avantToolStripMenuItem
             // 
             avantToolStripMenuItem.Name = "avantToolStripMenuItem";
-            avantToolStripMenuItem.Size = new Size(166, 34);
+            avantToolStripMenuItem.Size = new Size(218, 44);
             avantToolStripMenuItem.Text = "Avant";
             avantToolStripMenuItem.Click += avantToolStripMenuItem_Click;
             // 
             // arrièreToolStripMenuItem
             // 
             arrièreToolStripMenuItem.Name = "arrièreToolStripMenuItem";
-            arrièreToolStripMenuItem.Size = new Size(166, 34);
+            arrièreToolStripMenuItem.Size = new Size(218, 44);
             arrièreToolStripMenuItem.Text = "Arrière";
             arrièreToolStripMenuItem.Click += arrièreToolStripMenuItem_Click;
             // 
             // resetToolStripMenuItem
             // 
             resetToolStripMenuItem.Name = "resetToolStripMenuItem";
-            resetToolStripMenuItem.Size = new Size(70, 29);
+            resetToolStripMenuItem.Size = new Size(91, 36);
             resetToolStripMenuItem.Text = "Reset";
             resetToolStripMenuItem.Click += resetToolStripMenuItem_Click;
             // 
             // iou_label
             // 
             iou_label.AutoSize = true;
-            iou_label.Location = new Point(729, 681);
-            iou_label.Margin = new Padding(2, 0, 2, 0);
+            iou_label.Location = new Point(948, 872);
             iou_label.Name = "iou_label";
-            iou_label.Size = new Size(47, 25);
+            iou_label.Size = new Size(60, 32);
             iou_label.TabIndex = 15;
             iou_label.Text = "Iou :";
             // 
             // vinet_label
             // 
             vinet_label.AutoSize = true;
-            vinet_label.Location = new Point(888, 681);
-            vinet_label.Margin = new Padding(2, 0, 2, 0);
+            vinet_label.Location = new Point(1154, 872);
             vinet_label.Name = "vinet_label";
-            vinet_label.Size = new Size(61, 25);
+            vinet_label.Size = new Size(82, 32);
             vinet_label.TabIndex = 16;
             vinet_label.Text = "Vinet :";
             // 
             // img_comparaison
             // 
             img_comparaison.BorderStyle = BorderStyle.FixedSingle;
-            img_comparaison.Location = new Point(2, 2);
-            img_comparaison.Margin = new Padding(2);
+            img_comparaison.Location = new Point(3, 3);
             img_comparaison.Name = "img_comparaison";
-            img_comparaison.Size = new Size(217, 201);
+            img_comparaison.Size = new Size(282, 257);
             img_comparaison.SizeMode = PictureBoxSizeMode.StretchImage;
             img_comparaison.TabIndex = 17;
             img_comparaison.TabStop = false;
@@ -250,40 +245,36 @@
             // label_db
             // 
             label_db.AutoSize = true;
-            label_db.Location = new Point(285, 51);
-            label_db.Margin = new Padding(2, 0, 2, 0);
+            label_db.Location = new Point(370, 65);
             label_db.Name = "label_db";
-            label_db.Size = new Size(130, 25);
+            label_db.Size = new Size(172, 32);
             label_db.TabIndex = 18;
             label_db.Text = "Image Source :";
             // 
             // label_gt
             // 
             label_gt.AutoSize = true;
-            label_gt.Location = new Point(285, 393);
-            label_gt.Margin = new Padding(2, 0, 2, 0);
+            label_gt.Location = new Point(370, 503);
             label_gt.Name = "label_gt";
-            label_gt.Size = new Size(180, 25);
+            label_gt.Size = new Size(241, 32);
             label_gt.TabIndex = 19;
             label_gt.Text = "Image Ground Truth :";
             // 
             // label_imageTraitée
             // 
             label_imageTraitée.AutoSize = true;
-            label_imageTraitée.Location = new Point(714, 333);
-            label_imageTraitée.Margin = new Padding(2, 0, 2, 0);
+            label_imageTraitée.Location = new Point(928, 426);
             label_imageTraitée.Name = "label_imageTraitée";
-            label_imageTraitée.Size = new Size(126, 25);
+            label_imageTraitée.Size = new Size(170, 32);
             label_imageTraitée.TabIndex = 20;
             label_imageTraitée.Text = "Image Traitée :";
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(755, 64);
-            label1.Margin = new Padding(2, 0, 2, 0);
+            label1.Location = new Point(981, 82);
             label1.Name = "label1";
-            label1.Size = new Size(127, 25);
+            label1.Size = new Size(166, 32);
             label1.TabIndex = 21;
             label1.Text = "Comparaison :";
             // 
@@ -291,41 +282,45 @@
             // 
             panel1.AutoScroll = true;
             panel1.Controls.Add(image_db);
-            panel1.Location = new Point(285, 79);
+            panel1.Location = new Point(370, 101);
+            panel1.Margin = new Padding(4, 4, 4, 4);
             panel1.Name = "panel1";
-            panel1.Size = new Size(310, 304);
+            panel1.Size = new Size(403, 389);
             panel1.TabIndex = 22;
             panel1.Scroll += panel1_Scroll;
             // 
             // panel2
             // 
             panel2.Controls.Add(img_comparaison);
-            panel2.Location = new Point(729, 102);
+            panel2.Location = new Point(948, 131);
+            panel2.Margin = new Padding(4, 4, 4, 4);
             panel2.Name = "panel2";
-            panel2.Size = new Size(224, 203);
+            panel2.Size = new Size(291, 260);
             panel2.TabIndex = 23;
             // 
             // panel3
             // 
             panel3.Controls.Add(image_gt);
-            panel3.Location = new Point(285, 421);
+            panel3.Location = new Point(370, 539);
+            panel3.Margin = new Padding(4, 4, 4, 4);
             panel3.Name = "panel3";
-            panel3.Size = new Size(310, 304);
+            panel3.Size = new Size(403, 389);
             panel3.TabIndex = 24;
             // 
             // panel4
             // 
-            panel4.Controls.Add(image_traitée);
-            panel4.Location = new Point(714, 361);
+            panel4.Controls.Add(image_traitee);
+            panel4.Location = new Point(928, 462);
+            panel4.Margin = new Padding(4, 4, 4, 4);
             panel4.Name = "panel4";
-            panel4.Size = new Size(310, 304);
+            panel4.Size = new Size(403, 389);
             panel4.TabIndex = 25;
             // 
             // ProjetC
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1095, 747);
+            ClientSize = new Size(1424, 956);
             Controls.Add(panel4);
             Controls.Add(panel3);
             Controls.Add(panel2);
@@ -340,13 +335,12 @@
             Controls.Add(menuStrip1);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MainMenuStrip = menuStrip1;
-            Margin = new Padding(2);
             MaximizeBox = false;
             Name = "ProjetC";
             Text = "Projet C++";
             ((System.ComponentModel.ISupportInitialize)image_db).EndInit();
             ((System.ComponentModel.ISupportInitialize)image_gt).EndInit();
-            ((System.ComponentModel.ISupportInitialize)image_traitée).EndInit();
+            ((System.ComponentModel.ISupportInitialize)image_traitee).EndInit();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)img_comparaison).EndInit();
@@ -366,7 +360,7 @@
         private ImageList In_Sc_list;
         private FolderBrowserDialog folderBrowserDialog1;
         private PictureBox image_gt;
-        private PictureBox image_traitée;
+        private PictureBox image_traitee;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem fichierToolStripMenuItem;
         private ToolStripMenuItem ouvrirDossierToolStripMenuItem;

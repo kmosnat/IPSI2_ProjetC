@@ -760,6 +760,7 @@ double CImageNdg::indicateurPerformance(const CImageNdg& GroundTruth, const std:
 
 	if (methode.compare("iou") == 0) {
 		int cardInter = 0, cardUnion = 0;
+
 		for (int i = 0; i < this->lireNbPixels(); i++) {
 			if (this->operator()(i) == 1 && GroundTruth(i) == 1) {
 				cardInter++;
@@ -825,59 +826,6 @@ double CImageNdg::indicateurPerformance(const CImageNdg& GroundTruth, const std:
 			}
 		}
 		res = cardInter / (cardUnion - cardInter);
-	}
-	else if (methode.compare("vinet") == 0) {
-		int nt = 0, nr = 0, nm = 0;
-		/*
-		CImageClasse lab(*this, "V8");
-		CImageClasse labGT(GroundTruth, "V8");
-		std::vector<SIGNATURE_Forme> data = lab.signatures(false);
-		std::vector<SIGNATURE_Forme> dataGT = labGT.signatures(false);
-
-		nm = min(data.size(), dataGT.size());
-		float totalArea = 0;
-		float score = 0;
-
-		for (int i = 1; i < nm; i++) {
-			SIGNATURE_Forme* bestchoice = &dataGT[1];
-			//disanceSQ => (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y) / distanceSQ(POINT p1, POINT p2) / distanceSQ(st[i].CG, bestchoice->CG)
-			float minDis = pow((data[i].centreGravite_i - bestchoice->centreGravite_i),2) + pow((data[i].centreGravite_j - bestchoice->centreGravite_j),2);
-
-			for (int j = 1; j < dataGT.size(); j++) {
-				float dis = pow((data[i].centreGravite_i - dataGT[j].centreGravite_i), 2) + pow((data[i].centreGravite_j - dataGT[j].centreGravite_j), 2);
-				if (dis < minDis) {
-					minDis = dis;
-					bestchoice = &dataGT[j];
-				}
-			}
-			*/
-			/*
-			* 
-			* inline char belongTo(POINT p, REGION reg) {
-				if (p.x > reg.x && p.y > reg.y && p.x < reg.x + reg.width && p.y < reg.y + reg.height) {
-					return 1;
-				}
-				return 0;
-				};
-
-			for (int j = 2; (j < nm) && (belongTo(bestchoice->CG, st[i].region) != 0); j++) {
-				if (distanceSQ(st[i].CG, sr[j].CG) < minDis) {
-					bestchoice = &(sr[j]);
-					minDis = distanceSQ(st[i].CG, bestchoice->CG);
-				}
-			}
-			int minX = MIN(st[i].region.x, bestchoice->region.x);
-			int minY = MIN(st[i].region.y, bestchoice->region.y);
-			int maxX = MAX(st[i].region.x + st[i].region.width, bestchoice->region.x + bestchoice->region.width);
-			int maxY = MAX(st[i].region.y + st[i].region.height, bestchoice->region.y + bestchoice->region.height);
-			REGION compareRegion = { minX, minY, maxX - minX, maxY - minY };
-
-			totalArea += compareRegion.height * compareRegion.width;
-			score += (compareRegion.height * compareRegion.width) * localIoU(test, refc, compareRegion);
-			*
-			* 
-			
-		}*/
 	}
 	else {
 		throw std::string("Methode non reconnue");

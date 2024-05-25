@@ -1088,6 +1088,8 @@ std::vector<SIGNATURE_Forme> CImageClasse::signatures(bool enregistrementCSV) {
 			for (int j=0;j<this->lireLargeur();j++) {
 				tab[this->operator()(i,j)].centreGravite_i += i;
 				tab[this->operator()(i,j)].centreGravite_j += j;
+				tab[this->operator()(i, j)].centreGravite.y += i;
+				tab[this->operator()(i, j)].centreGravite.x += j;
 				tab[this->operator()(i,j)].surface += 1;
 				if (tab[this->operator()(i,j)].premierPt_i == -1)
 					tab[this->operator()(i,j)].premierPt_i = i;
@@ -1097,6 +1099,10 @@ std::vector<SIGNATURE_Forme> CImageClasse::signatures(bool enregistrementCSV) {
 				tab[this->operator()(i,j)].rectEnglob_Bj = max(tab[this->operator()(i,j)].rectEnglob_Bj,j);
 				tab[this->operator()(i,j)].rectEnglob_Hi = min(tab[this->operator()(i,j)].rectEnglob_Hi,i);
 				tab[this->operator()(i,j)].rectEnglob_Hj = min(tab[this->operator()(i,j)].rectEnglob_Hj,j);
+				tab[this->operator()(i, j)].region.x = min(i, tab[this->operator()(i, j)].region.x);
+				tab[this->operator()(i, j)].region.y = min(j, tab[this->operator()(i, j)].region.y);
+				tab[this->operator()(i, j)].region.width = max(i, tab[this->operator()(i, j)].region.width);
+				tab[this->operator()(i, j)].region.height = max(j, tab[this->operator()(i, j)].region.height);
 				}
 
 		for (int k=0;k<(int)tab.size();k++) 
@@ -1256,6 +1262,91 @@ std::vector<SIGNATURE_Forme> CImageClasse::signatures(bool enregistrementCSV) {
 	}
 
 	return tab;
+}
+
+float CImageClasse::localIoU(CImageNdg test, CImageNdg ref, REGION reg)
+{
+	unsigned int intersect = 0, uni = 0;	// nombre de pixels dans l'intersection et l'union
+	for (int i = reg.x; i < reg.x + reg.width; i++) {
+		for (int j = reg.y; j < reg.y + reg.height; j++) {
+			int index = j * test.lireLargeur() + i;
+
+			/*if (test.data[index] == ref.data[index])		// pixels identiques -> 0 dans diff
+				diff.data[index] = 0;
+			else								// pixels differents -> 1 dans diff
+				diff.data[index] = 255;*/
+
+			if ((test.operator()(i, j) != 0) || (ref.operator()(i,j) != 0))
+				uni++;										// Si une des images a un defaut
+			if ((test.operator()(i, j) != 0) && (ref.operator()(i, j) != 0))
+				intersect++;								// Si les deux images ont un defaut
+		}
+	}
+
+	return (float)intersect / uni;
+}
+
+#include <iostream>
+
+float CImageClasse::vinet(CImageNdg img, CImageNdg GT) {
+	int nt = 0, nr = 0;
+
+	// Récupérer les signatures de l'image et du ground truth
+	std::vector<SIGNATURE_Forme> st = signatures();
+	nt = st.size();  
+
+	CImageClasse GTClasse = CImageClasse(GT, "V8");
+	std::vector<SIGNATURE_Forme> sr = GTClasse.signatures();
+	nr = sr.size(); 
+
+	// Déterminer le nombre minimum de signatures entre l'image et le ground truth
+	int nm = min(nt, nr);
+	float totalArea = 0;
+	float score = 0;
+
+	// Comparer chaque signature de l'image avec la plus proche signature du ground truth
+	for (int i = 0; i < nm; i++) {
+		SIGNATURE_Forme* bestchoice = &(sr[0]);  
+		float minDis = distanceSQ(st[i].centreGravite, bestchoice->centreGravite);
+
+		for (int j = 1; (j < nm) && (belongTo(bestchoice->centreGravite, st[i].region) != 0); j++) {
+			float dis = distanceSQ(st[i].centreGravite, sr[j].centreGravite);
+			if (dis < minDis) {
+				bestchoice = &(sr[j]);
+				minDis = dis;
+			}
+		}
+
+		int minX = min(st[i].region.x, bestchoice->region.x);
+		int minY = min(st[i].region.y, bestchoice->region.y);
+		int maxX = max(st[i].region.x + st[i].region.width, bestchoice->region.x + bestchoice->region.width);
+		int maxY = max(st[i].region.y + st[i].region.height, bestchoice->region.y + bestchoice->region.height);
+		REGION compareRegion = { minX, minY, maxX - minX, maxY - minY };
+
+		totalArea += compareRegion.height * compareRegion.width;
+		score += (compareRegion.height * compareRegion.width) * localIoU(img, GT, compareRegion);
+	}
+
+	// Si nt < nr, ajouter les zones des signatures non correspondantes du ground truth
+	if (nt < nr) {
+		for (int i = nt; i < nr; i++) {
+			totalArea += sr[i].region.height * sr[i].region.width;
+		}
+	} else if (nt > nr) {
+		for (int i = nr; i < nt; i++) {
+			totalArea += st[i].region.height * st[i].region.width;
+		}
+	}
+
+	// Normaliser le score par la zone totale
+	if (totalArea > 0) {
+		score /= totalArea;
+	}
+	else {
+		score = 0;
+	}
+
+	return score;
 }
 
 CImageClasse CImageClasse::mutation(const CImageNdg& img)

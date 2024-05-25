@@ -15,6 +15,8 @@
 #define EUCLIDEAN(a,b) ((a-b) * (a-b)) 
 #define MAX_ITER 100
 
+
+
 typedef struct  {
 	double  moyenne;
 	int     min;
@@ -28,8 +30,21 @@ typedef struct  {
 } SIGNATURE_Couleur;
 
 typedef struct {
+	float x;
+	float y;
+} CG;
+
+typedef struct {
+	int x;
+	int y;
+	int width;
+	int height;
+} REGION;
+
+typedef struct {
 	float		centreGravite_i;
 	float		centreGravite_j;
+	CG			centreGravite;
 	int			surface;
 	std::string codeFreeman; // au sens V8
 	int			premierPt_i; // premier point rencontré sens de parcours avant
@@ -38,6 +53,7 @@ typedef struct {
 	int			rectEnglob_Hj;
 	int			rectEnglob_Bi;
 	int			rectEnglob_Bj;
+	REGION		region;
 	float		perimetre; // au sens V8
 } SIGNATURE_Forme;
 
@@ -151,6 +167,18 @@ class CImageClasse {
 		                                                                                                                                    // choix "maxiLocaux" sur voisinage tMin x tMax
 		// signatures forme pour Image_Ndg et Image_Couleur
 		_declspec(dllexport) std::vector<SIGNATURE_Forme> signatures(bool enregistrementCSV = false);
+
+		inline float distanceSQ(CG a, CG b) {
+			return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
+		}
+
+		inline bool belongTo(CG p, REGION r) {
+			return (p.x >= r.x && p.x <= r.x + r.width && p.y >= r.y && p.y <= r.y + r.height);
+		}
+
+		_declspec(dllexport) float localIoU(CImageNdg img, CImageNdg GT, REGION region); // score de Vinet
+
+		_declspec(dllexport) float vinet(CImageNdg img, CImageNdg GT); // score de Vinet
 
 		// cellules de Voronoï
 		_declspec(dllexport) CImageClasse cellules(); // cellules de Voronoï

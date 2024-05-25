@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 
+
 typedef struct {
 	int		min;
 	int		max;

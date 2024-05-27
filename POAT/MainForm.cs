@@ -175,7 +175,6 @@ namespace POAT
                 image_db.Image = Image.FromFile(sourceImagePath);
                 image_gt.Image = Image.FromFile(groundTruthImagePath);
 
-                // Appel de la m�thode processImage
                 processImage();
             }
 
@@ -183,14 +182,47 @@ namespace POAT
 
         private void filterDialog()
         {
-            // attendre la fin de la saisie dans FormFilter
             using (Filter formFilter = new Filter())
             {
                 if (formFilter.ShowDialog() == DialogResult.OK)
                 {
-                    kernelSize = formFilter.getKernel();
-                    structElement = formFilter.getStr();
+                    kernelSize = formFilter.getKernelSize();
+                    structElement = formFilter.getStrElement();
                 }
+            }
+
+        }
+
+        private void filter(String methode)
+        {
+            if (treeView_in_sc.SelectedNode != null)
+            {
+                // Appel du Form Filter
+                filterDialog();
+
+                if (image_db.Image != null)
+                {
+                    Bitmap processedImage = Task.Run(() =>
+                    {
+                        Bitmap bmp = new Bitmap(image_db.Image);
+                        ClImage Img = new ClImage();
+
+                        unsafe
+                        {
+                            var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                            Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
+                            // a changer pour choisir le type d'�l�ment struct
+                            Img.filterPtr(kernelSize, methode, structElement);
+
+                            bmp.UnlockBits(bmpData);
+                        }
+
+                        return bmp;
+                    }).Result;
+
+                    image_db.Image = processedImage;
+                }
+                processImage();
             }
 
         }
@@ -198,68 +230,28 @@ namespace POAT
 
         private void moyenToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (treeView_in_sc.SelectedNode != null)
-            {
-                // Appel de la m�thode getKernel
-                filterDialog();
-
-                if (image_db.Image != null)
-                {
-                    Bitmap processedImage = Task.Run(() =>
-                    {
-                        Bitmap bmp = new Bitmap(image_db.Image);
-                        ClImage Img = new ClImage();
-
-                        unsafe
-                        {
-                            var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                            Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-                            // a changer pour choisir le type d'�l�ment struct
-                            Img.filterPtr(kernelSize, "moyen" ,structElement);
-
-                            bmp.UnlockBits(bmpData);
-                        }
-
-                        return bmp;
-                    }).Result;
-
-                    image_db.Image = processedImage;
-                }
-                processImage();
-            }
+            filter("moyen");
         }
 
 
         private void medianToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (treeView_in_sc.SelectedNode != null)
-            {
-                filterDialog();
+            filter("median");
+        }
 
-                if (image_db.Image != null)
-                {
-                    Bitmap processedImage = Task.Run(() =>
-                    {
-                        Bitmap bmp = new Bitmap(image_db.Image);
-                        ClImage Img = new ClImage();
+        private void refreshImages()
+        {
+            image_db.Refresh();
+            image_gt.Refresh();
 
-                        unsafe
-                        {
-                            var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                            Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-                            // a changer pour choisir le type d'�l�ment struct
-                            Img.filterPtr(kernelSize, "median", structElement);
+            image_traitee.Image = null;
+            img_comparaison.Image = null;
 
-                            bmp.UnlockBits(bmpData);
-                        }
+            //remise � z�ro des labels
+            iou_label.Text = "Iou : ";
+            vinet_label.Text = "Vinet : ";
 
-                        return bmp;
-                    }).Result;
-
-                    image_db.Image = processedImage;
-                }
-                processImage();
-            }
+            processImage();
         }
 
         private void horaireToolStripMenuItem_Click(object sender, EventArgs e)
@@ -269,17 +261,8 @@ namespace POAT
                 // rotation horaire
                 image_db.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
                 image_gt.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                image_db.Refresh();
-                image_gt.Refresh();
-
-                image_traitee.Image = null;
-                img_comparaison.Image = null;
-
-                //remise � z�ro des labels
-                iou_label.Text = "Iou : ";
-                vinet_label.Text = "Vinet : ";
-
-                processImage();
+                
+                refreshImages();
             }
 
         }
@@ -291,17 +274,8 @@ namespace POAT
                 // rotation antihoraire
                 image_db.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
                 image_gt.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                image_db.Refresh();
-                image_gt.Refresh();
 
-                image_traitee.Image = null;
-                img_comparaison.Image = null;
-
-                //remise � z�ro des labels
-                iou_label.Text = "Iou : ";
-                vinet_label.Text = "Vinet : ";
-
-                processImage();
+                refreshImages();
             }
         }
 

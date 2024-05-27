@@ -22,7 +22,7 @@ namespace POAT
 
         private void ParentFormMoved(object sender, EventArgs e)
         {
-            CenterToParentForm(); // Réajustez la position chaque fois que le formulaire principal se déplace
+            CenterToParentForm(); 
         }
 
         private void CenterToParentForm()

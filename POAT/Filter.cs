@@ -23,7 +23,7 @@ namespace POAT
             comboBox.SelectedIndex = 0;
         }
 
-        public int getKernel()
+        public int getKernelSize()
         {
             string value = kenelSizeTextBox.Text;
             int val = int.Parse(value);
@@ -37,7 +37,7 @@ namespace POAT
 
         }
 
-        public string getStr()
+        public string getStrElement()
         {
             int value = comboBox.SelectedIndex;
             switch (value)
@@ -49,13 +49,12 @@ namespace POAT
             return "";
         }
 
-
-        private void button1_Click(object sender, EventArgs e)
+        private void okButton_Click_1(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void quitButton_Click(object sender, EventArgs e)
         {
             this.Close();
         }

@@ -39,7 +39,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(0, 0);
+            label1.Location = new Point(16, 31);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
             label1.Size = new Size(283, 32);
@@ -48,25 +48,25 @@
             // 
             // okButton
             // 
-            okButton.Location = new Point(879, 109);
-            okButton.Margin = new Padding(4, 4, 4, 4);
+            okButton.Location = new Point(604, 91);
+            okButton.Margin = new Padding(4);
             okButton.Name = "okButton";
             okButton.Size = new Size(146, 44);
             okButton.TabIndex = 1;
             okButton.Text = "OK";
             okButton.UseVisualStyleBackColor = true;
-            okButton.Click += button1_Click;
+            okButton.Click += okButton_Click_1;
             // 
             // quitButton
             // 
-            quitButton.Location = new Point(879, 186);
-            quitButton.Margin = new Padding(4, 4, 4, 4);
+            quitButton.Location = new Point(604, 217);
+            quitButton.Margin = new Padding(4);
             quitButton.Name = "quitButton";
             quitButton.Size = new Size(146, 44);
             quitButton.TabIndex = 2;
             quitButton.Text = "Quitter";
             quitButton.UseVisualStyleBackColor = true;
-            quitButton.Click += button2_Click;
+            quitButton.Click += quitButton_Click;
             // 
             // label2
             // 
@@ -81,7 +81,7 @@
             // kenelSizeTextBox
             // 
             kenelSizeTextBox.Location = new Point(47, 91);
-            kenelSizeTextBox.Margin = new Padding(4, 4, 4, 4);
+            kenelSizeTextBox.Margin = new Padding(4);
             kenelSizeTextBox.Name = "kenelSizeTextBox";
             kenelSizeTextBox.Size = new Size(194, 39);
             kenelSizeTextBox.TabIndex = 4;
@@ -92,7 +92,7 @@
             comboBox.DisplayMember = "Disque";
             comboBox.FormattingEnabled = true;
             comboBox.Location = new Point(47, 376);
-            comboBox.Margin = new Padding(4, 4, 4, 4);
+            comboBox.Margin = new Padding(4);
             comboBox.Name = "comboBox";
             comboBox.Size = new Size(235, 40);
             comboBox.TabIndex = 5;
@@ -101,7 +101,7 @@
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1040, 576);
+            ClientSize = new Size(803, 450);
             ControlBox = false;
             Controls.Add(comboBox);
             Controls.Add(kenelSizeTextBox);
@@ -109,9 +109,9 @@
             Controls.Add(quitButton);
             Controls.Add(okButton);
             Controls.Add(label1);
-            Margin = new Padding(4, 4, 4, 4);
+            Margin = new Padding(4);
             Name = "Filter";
-            Text = "Filter";
+            Text = "Filtre";
             ResumeLayout(false);
             PerformLayout();
         }

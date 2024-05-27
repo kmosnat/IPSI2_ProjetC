@@ -184,6 +184,7 @@ class CImageClasse {
 		_declspec(dllexport) CImageClasse cellules(); // cellules de Voronoï
 		_declspec(dllexport) std::vector<SIGNATURE_Cellule> sigCellules(const CImageNdg& img, bool enregistrementCSV = false);
 
+
 };
 
 #endif

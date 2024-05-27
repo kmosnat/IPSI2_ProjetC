@@ -16,17 +16,23 @@ namespace POAT
 {
     public partial class ProjetC : Form
     {
-        ComboBox comboBoxFilterType = new ComboBox();
-        public ProjetC()
-        {
-            InitializeComponent();
-        }
+        private int zoom;
 
         private string sourceImagesPath = "";
         private string groundTruthsImagePath = "";
 
         private int kernelSize = 3;
         private string structElement = "disk";
+
+        public ProjetC()
+        {
+            InitializeComponent();
+
+            arrièreToolStripMenuItem.Enabled = false;
+        }
+
+   
+
 
         private void reset()
         {
@@ -318,12 +324,21 @@ namespace POAT
 
                 image_traitee.Width *= 2;
                 image_traitee.Height *= 2;
+
+                zoom += 1;
+
+                arrièreToolStripMenuItem.Enabled = true;
+
+                if (zoom==6)
+                {
+                    avantToolStripMenuItem.Enabled = false;
+                }
             }
         }
 
         private void arrièreToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (treeView_in_sc.SelectedNode != null)
+            if (treeView_in_sc.SelectedNode != null && zoom != 0)
             {
                 image_db.Width /= 2;
                 image_db.Height /= 2;
@@ -333,7 +348,17 @@ namespace POAT
 
                 image_traitee.Width /= 2;
                 image_traitee.Height /= 2;
+
+                zoom -= 1;
+
+                avantToolStripMenuItem.Enabled = true;
+
+                if (zoom == 0)
+                {
+                    arrièreToolStripMenuItem.Enabled = false;
+                }
             }
+    
 
         }
 

@@ -16,7 +16,8 @@ namespace POAT
 {
     public partial class ProjetC : Form
     {
-        private int zoom;
+        private int zoom = 1;
+        private Size originalSize;
 
         private string sourceImagesPath = "";
         private string groundTruthsImagePath = "";
@@ -27,12 +28,9 @@ namespace POAT
         public ProjetC()
         {
             InitializeComponent();
-
+            originalSize = new Size(image_db.Width, image_db.Height);
             arrièreToolStripMenuItem.Enabled = false;
         }
-
-   
-
 
         private void reset()
         {
@@ -41,9 +39,6 @@ namespace POAT
             image_gt.Image = null;
             image_traitee.Image = null;
             img_comparaison.Image = null;
-
-            // Remise � z�ro du zoom
-
 
             //remise � z�ro des labels
             iou_label.Text = "Iou : ";
@@ -302,6 +297,10 @@ namespace POAT
                     return;
                 }
 
+                //reset zoom
+                zoom = 1;
+                ZoomImage(1);
+
                 reset();
 
                 image_db.Image = Image.FromFile(sourceImagePath);
@@ -314,70 +313,58 @@ namespace POAT
 
         private void avantToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (treeView_in_sc.SelectedNode != null)
-            {
-                image_db.Width *= 2;
-                image_db.Height *= 2;
-
-                image_gt.Width *= 2;
-                image_gt.Height *= 2;
-
-                image_traitee.Width *= 2;
-                image_traitee.Height *= 2;
-
-                zoom += 1;
-
-                arrièreToolStripMenuItem.Enabled = true;
-
-                if (zoom==6)
-                {
-                    avantToolStripMenuItem.Enabled = false;
-                }
-            }
+            ZoomImage(2);
         }
 
         private void arrièreToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (treeView_in_sc.SelectedNode != null && zoom != 0)
+            ZoomImage(0.5);
+        }
+
+        private void ZoomImage(double scaleFactor)
+        {
+            if (treeView_in_sc.SelectedNode != null)
             {
-                image_db.Width /= 2;
-                image_db.Height /= 2;
+               
+                zoom = (int)(zoom * scaleFactor);
+                zoom = Math.Max(1, Math.Min(zoom, 6));
 
-                image_gt.Width /= 2;
-                image_gt.Height /= 2;
+                AdjustImageSize(image_db, zoom);
+                AdjustImageSize(image_gt, zoom);
+                AdjustImageSize(image_traitee, zoom);
 
-                image_traitee.Width /= 2;
-                image_traitee.Height /= 2;
+                avantToolStripMenuItem.Enabled = zoom < 6;
+                arrièreToolStripMenuItem.Enabled = zoom > 1;
 
-                zoom -= 1;
-
-                avantToolStripMenuItem.Enabled = true;
-
-                if (zoom == 0)
-                {
-                    arrièreToolStripMenuItem.Enabled = false;
-                }
+                AdjustImagePosition();
             }
-    
+        }
 
+        private void AdjustImageSize(PictureBox pictureBox, int zoomLevel)
+        {
+            pictureBox.Size = new Size(originalSize.Width * zoomLevel, originalSize.Height * zoomLevel);
         }
 
         private void panel1_Scroll(object sender, ScrollEventArgs e)
         {
-            // R�cup�rer la valeur du d�filement vertical actuel
+            AdjustImagePosition();
+        }
+
+        private void AdjustImagePosition()
+        {
             int scrollValue_v = panel1.VerticalScroll.Value;
-
-            // D�placer les PictureBox en fonction de la valeur de d�filement vertical
-            image_gt.Top = -scrollValue_v;
-            image_traitee.Top = -scrollValue_v;
-
-
-            // R�cup�rer la valeur du d�filement horizontal actuel
             int scrollValue_h = panel1.HorizontalScroll.Value;
 
-            // D�placer les PictureBox en fonction de la valeur de d�filement horizontal
-            image_gt.Left = -scrollValue_h;
-            image_traitee.Left = -scrollValue_h;
+            SetImagePosition(image_db, scrollValue_h, scrollValue_v);
+            SetImagePosition(image_gt, scrollValue_h, scrollValue_v);
+            SetImagePosition(image_traitee, scrollValue_h, scrollValue_v);
         }
+
+        private void SetImagePosition(PictureBox image, int scrollValue_h, int scrollValue_v)
+        {
+            image.Top = -scrollValue_v;
+            image.Left = -scrollValue_h;
+        }
+
     }
 }

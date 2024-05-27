@@ -860,7 +860,7 @@ double CImageNdg::correlation(const CImageNdg& GroundTruth) const {
 }
 
 // filtrage
-CImageNdg CImageNdg::filtrage(const std::string& methode, int Ni, int Nj,const std::string& str) {
+CImageNdg CImageNdg::filtrage(const std::string& methode, int Ni, int Nj, const std::string& str) {
 		
 	CImageNdg out(this->lireHauteur(),this->lireLargeur());
 	out.m_sNom     = this->lireNom()+"F";

@@ -121,15 +121,15 @@ CImageNdg ClibIHM::toBinaire()
 	return imgNdg;
 }
 
-void ClibIHM::filter(std::string methode, int kernel)
+void ClibIHM::filter(std::string methode, int kernel, std::string str)
 {
 	if (methode == "moyen")
 	{
-		this->copyImage(this->imgNdgPt->filtrage("moyennage", kernel, kernel));
+		this->copyImage(this->imgNdgPt->filtrage("moyennage", kernel, kernel, str));
 	}
 	else if (methode == "median")
 	{
-		this->copyImage(this->imgNdgPt->filtrage("median", kernel, kernel));
+		this->copyImage(this->imgNdgPt->filtrage("median", kernel, kernel, str));
 	}
 
 	this->persitData(this->imgNdgPt, COULEUR::RVB);

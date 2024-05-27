@@ -215,7 +215,7 @@ namespace POAT
                             var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
                             Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
                             // a changer pour choisir le type d'�l�ment struct
-                            Img.meanFilterPtr(kernelSize, structElement);
+                            Img.filterPtr(kernelSize, "moyen" ,structElement);
 
                             bmp.UnlockBits(bmpData);
                         }
@@ -248,7 +248,7 @@ namespace POAT
                             var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
                             Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
                             // a changer pour choisir le type d'�l�ment struct
-                            Img.medianFilterPtr(kernelSize, structElement);
+                            Img.filterPtr(kernelSize, "median", structElement);
 
                             bmp.UnlockBits(bmpData);
                         }

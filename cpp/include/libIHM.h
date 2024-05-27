@@ -69,7 +69,7 @@ public:
 
 	_declspec(dllexport) CImageNdg toBinaire();
 
-	_declspec(dllexport) void filter(std::string methode,int kernel);
+	_declspec(dllexport) void filter(std::string methode, int kernel, std::string str);
 	_declspec(dllexport) void runProcess(ClibIHM* pImgGt);
 
 	_declspec(dllexport) void compare(ClibIHM* pImgGt);
@@ -90,15 +90,9 @@ extern "C" _declspec(dllexport) ClibIHM* objetLibDataImg(int nbChamps, byte* dat
 	return pImg;
 }
 
-extern "C" _declspec(dllexport) ClibIHM * meanFilter(ClibIHM* pImg, int kernel)
+extern "C" _declspec(dllexport) ClibIHM * filter(ClibIHM* pImg, int kernel, char* methode, char* str)
 {
-	pImg->filter("moyen", kernel);
-	return pImg;
-}
-
-extern "C" _declspec(dllexport) ClibIHM * medianFilter(ClibIHM* pImg, int kernel)
-{
-	pImg->filter("median", kernel);
+	pImg->filter(methode, kernel, str);
 	return pImg;
 }
 

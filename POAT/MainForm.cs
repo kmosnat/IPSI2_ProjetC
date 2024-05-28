@@ -102,8 +102,6 @@ namespace POAT
                     bmp.UnlockBits(bmpData);
                     bmpGt.UnlockBits(bmpDataGt);
                     
-
-
                     double iou = Img.objetLibValeurChamp(0);
                     double vinet = Img.objetLibValeurChamp(1);
 

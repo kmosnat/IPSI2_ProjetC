@@ -184,7 +184,11 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 		res = seuil;
 	}
 
-	this->writeBinaryImage(res);
+	CImageClasse imgClasse = CImageClasse(res, "V8");
+	CImageClasse filtre = imgClasse.filtrage("taille", 30, 10000, false);
+	CImageNdg trueRes = filtre.toNdg();
+
+	this->writeBinaryImage(trueRes);
 
 	this->score(pImgGt);
 	this->compare(pImgGt);

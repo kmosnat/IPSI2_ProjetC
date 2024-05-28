@@ -183,6 +183,8 @@ class CImageClasse {
 		// cellules de Voronoï
 		_declspec(dllexport) CImageClasse cellules(); // cellules de Voronoï
 		_declspec(dllexport) std::vector<SIGNATURE_Cellule> sigCellules(const CImageNdg& img, bool enregistrementCSV = false);
+
+		_declspec(dllexport) CImageNdg toNdg(); // conversion en image Ndg
 };
 
 #endif

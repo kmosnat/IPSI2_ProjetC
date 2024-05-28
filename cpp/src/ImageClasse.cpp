@@ -1585,3 +1585,18 @@ std::vector<SIGNATURE_Cellule> CImageClasse::sigCellules(const CImageNdg& img, b
 
 	return tab;
 }
+
+CImageNdg CImageClasse::toNdg()
+{
+	CImageNdg out(this->lireHauteur(), this->lireLargeur());
+	out.ecrireNom(this->lireNom() + "Ndg");
+	out.choixPalette("binaire");
+
+	for (int i = 0; i < this->lireNbPixels(); i++)
+		if (this->operator()(i) == 0)
+			out(i) = 0;
+		else
+			out(i) = 1;
+
+	return out;
+}

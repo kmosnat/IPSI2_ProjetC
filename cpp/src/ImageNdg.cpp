@@ -967,7 +967,8 @@ CImageNdg CImageNdg::filtrage(const std::string& methode, int Ni, int Nj, const 
 							// Triez le vecteur pour trouver la médiane
 							std::sort(voisinage.begin(), voisinage.end());
 
-							// Assignez la médiane au pixel de sortie								out(i, j) = voisinage[voisinage.size() / 2];
+							// Assignez la médiane au pixel de sortie								
+							out(i, j) = voisinage[voisinage.size() / 2];
 						}
 					}
 				}

@@ -142,6 +142,9 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 
 	CImageNdg inv_whiteTopHat, whiteTopHat;
 
+	//filtre median
+	this->filter("median", 3, "V8");
+
 	// Cr�ation et d�marrage des threads pour calculer whiteTopHat et inv_whiteTopHat
 	std::thread th1([&] {
 		inv_whiteTopHat = this->imgNdgPt->transformation().whiteTopHat("disk", 17);
@@ -168,16 +171,20 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 	th3.join();
 	th4.join();
 
+	CImageNdg res;
 	CImageNdg GT = pImgGt->toBinaire();
+
 
 	if (inv_seuil.correlation(GT) > seuil.correlation(GT))
 	{
-		this->writeBinaryImage(inv_seuil);
+		res = inv_seuil;
 	}
 	else
 	{
-		this->writeBinaryImage(seuil);
+		res = seuil;
 	}
+
+	this->writeBinaryImage(res);
 
 	this->score(pImgGt);
 	this->compare(pImgGt);

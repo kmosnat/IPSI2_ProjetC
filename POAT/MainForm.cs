@@ -11,6 +11,8 @@ using System.Drawing.Imaging;
 
 using System.Runtime.InteropServices;
 using libImage;
+using static System.Net.Mime.MediaTypeNames;
+using Image = System.Drawing.Image;
 
 namespace POAT
 {
@@ -80,34 +82,33 @@ namespace POAT
                 this.Enabled = false;
                 progressForm.Show();
 
-                (Bitmap processedImage, Bitmap groundTruthImage, double iouValue, double vinetValue) = await Task.Run(() =>
+                var (processedImage, groundTruthImage, iouValue, vinetValue) = await Task.Run(() =>
                 {
                     Bitmap bmp = new Bitmap(image_db.Image);
                     Bitmap bmpGt = new Bitmap(image_gt.Image);
                     ClImage Img = new ClImage();
                     ClImage ImgGT = new ClImage();
 
+                    var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    var bmpDataGt = bmpGt.LockBits(new Rectangle(0, 0, bmpGt.Width, bmpGt.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
-                    unsafe
-                    {
-                        var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                        var bmpDataGt = bmpGt.LockBits(new Rectangle(0, 0, bmpGt.Width, bmpGt.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    progressForm.SetProgress(98);
 
-                        progressForm.SetProgress(98);
+                    Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
+                    Img.processPtr(ImgGT.objetLibDataImgPtr(0, bmpDataGt.Scan0, bmpDataGt.Stride, bmpGt.Height, bmpGt.Width));
 
-                        Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-                        Img.processPtr(ImgGT.objetLibDataImgPtr(2, bmpDataGt.Scan0, bmpDataGt.Stride, bmpGt.Height, bmpGt.Width));
+                    progressForm.SetProgress(100);
 
-                        progressForm.SetProgress(100);
+                    bmp.UnlockBits(bmpData);
+                    bmpGt.UnlockBits(bmpDataGt);
+                    
 
-                        bmp.UnlockBits(bmpData);
-                        bmpGt.UnlockBits(bmpDataGt);
-                    }
 
                     double iou = Img.objetLibValeurChamp(0);
                     double vinet = Img.objetLibValeurChamp(1);
 
                     return (bmp, bmpGt, iou, vinet);
+
                 });
 
                 iou_label.Text = $"Iou :  {iouValue} %";
@@ -118,7 +119,7 @@ namespace POAT
                 this.Enabled = true;
                 progressForm.CloseForm();
             }
-        }
+        } 
 
 
         private void ouvrirDossierToolStripMenuItem_Click(object sender, EventArgs e)

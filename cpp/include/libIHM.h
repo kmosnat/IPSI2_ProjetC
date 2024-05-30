@@ -25,11 +25,11 @@ private:
 	///////////////////////////////////////
 
 	// data n�cessaires � l'IHM donc fonction de l'application cibl�e
-	int						nbDataImg; // nb champs Texte de l'IHM
-	std::vector<double>		dataFromImg; // champs Texte de l'IHM
-	CImageCouleur* imgPt;       // 
-	CImageNdg* imgNdgPt;     //
-	byte* data;       // champs Texte de l'IHM
+	int						nbDataImg; 
+	std::vector<double>		dataFromImg; 
+	CImageCouleur* imgPt;        
+	CImageNdg* imgNdgPt;     
+	byte* data;       
 	int NbLig;
 	int NbCol;
 	int stride;

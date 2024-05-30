@@ -40,6 +40,7 @@ namespace POAT
             this.parentForm.Move -= ParentFormMoved;
         }
 
+        // Set la valeur de la ProgressBar
         public void SetProgress(int progress)
         {
             if (this.progressBar.InvokeRequired)
@@ -52,6 +53,7 @@ namespace POAT
             }
         }
 
+        // Fermer le formulaire ProgressForm
         public void CloseForm()
         {
             if (this.InvokeRequired)

@@ -10,6 +10,7 @@
 
 #include "libIHM.h"
 
+// Initialisateur par défaut
 ClibIHM::ClibIHM() {
 
 	this->nbDataImg = 0;
@@ -17,6 +18,7 @@ ClibIHM::ClibIHM() {
 	this->imgPt = NULL;
 }
 
+// Initialisateur par valeurs
 ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 {
 	if (data == nullptr) {
@@ -56,6 +58,7 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 
 }
 
+// Recuperer les valeurs pixels de l'image de la classe CImageNdg pour une image de la classe ClibIHM
 void ClibIHM::copyImage(CImageNdg img)
 {
 	for (int y = 0; y < NbLig; y++)
@@ -67,6 +70,7 @@ void ClibIHM::copyImage(CImageNdg img)
 	}
 }
 
+// Ecrire une image de la classe CImageCouleur à partir d'une image pointeur ClibIHM
 void ClibIHM::writeImage(ClibIHM* img, CImageCouleur out)
 {
 	// Ecriture de l'image
@@ -83,6 +87,7 @@ void ClibIHM::writeImage(ClibIHM* img, CImageCouleur out)
 	}
 }
 
+// Pour binariser une image de la classe CImageNdg en vrai binaire pour la classe ClibIHM
 void ClibIHM::writeBinaryImage(CImageNdg img)
 {
 	for (int y = 0; y < NbLig; y++)
@@ -101,6 +106,7 @@ void ClibIHM::writeBinaryImage(CImageNdg img)
 	}
 }
 
+// Pour binariser une image de la classe ClibIHM en vrai binaire pour la classe CImageNdg
 CImageNdg ClibIHM::toBinaire()
 {
 	CImageNdg imgNdg(NbLig, NbCol);
@@ -121,6 +127,7 @@ CImageNdg ClibIHM::toBinaire()
 	return imgNdg;
 }
 
+// Filtrage de l'image en fonction des paramètres appliqués
 void ClibIHM::filter(std::string methode, int kernel, std::string str)
 {
 	if (methode == "moyen")
@@ -135,6 +142,7 @@ void ClibIHM::filter(std::string methode, int kernel, std::string str)
 	this->persitData(this->imgNdgPt, COULEUR::RVB);
 }
 
+// Traitement de l'image
 void ClibIHM::runProcess(ClibIHM* pImgGt)
 {
 	int seuilBas = 0;
@@ -196,7 +204,7 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 	this->persitData(this->imgNdgPt, COULEUR::RVB);
 }
 
-
+// Compare l'image traitee et la ground truth pour afficher les ressemblance et les differences
 void ClibIHM::compare(ClibIHM* pImgGt)
 {
 	CImageCouleur out(NbLig, NbCol);
@@ -230,6 +238,7 @@ void ClibIHM::compare(ClibIHM* pImgGt)
 	writeImage(pImgGt, out);
 }
 
+// Calcul du score en fonction de la ground truth
 void ClibIHM::score(ClibIHM* pImgGt)
 {
 	// Score IOU
@@ -259,7 +268,7 @@ void ClibIHM::score(ClibIHM* pImgGt)
 	th2.join();
 }
 
-
+// Ecrire les pixels de l'image envoye selon le canaux choisit
 void ClibIHM::persitData(CImageNdg* pImg, COULEUR color)
 {
 	CImageCouleur out(NbLig, NbCol);
@@ -299,7 +308,7 @@ void ClibIHM::persitData(CImageNdg* pImg, COULEUR color)
 	writeImage(this, out);
 }
 
-
+// Destructeur
 ClibIHM::~ClibIHM() {
 	
 	if (imgPt)

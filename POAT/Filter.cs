@@ -23,6 +23,7 @@ namespace POAT
             comboBox.SelectedIndex = 0;
         }
 
+        // Get pour savoir ce que l'utilisateur a choisit comme taille d'element structurant, la taille doit etre impair et positive
         public int getKernelSize()
         {
             string value = kenelSizeTextBox.Text;
@@ -37,6 +38,7 @@ namespace POAT
 
         }
 
+        // Get pour savoir ce que l'utilisateur a choisit comme forme de l'element structurant
         public string getStrElement()
         {
             int value = comboBox.SelectedIndex;
@@ -49,11 +51,13 @@ namespace POAT
             return "";
         }
 
+        // Donne le signal au formulaire MainForm pour dire que l'utilisateur a fait son choix
         private void okButton_Click_1(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
         }
 
+        // Ferme le formulaire Filter
         private void quitButton_Click(object sender, EventArgs e)
         {
             this.Close();

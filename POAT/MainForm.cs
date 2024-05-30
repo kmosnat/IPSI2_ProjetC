@@ -18,48 +18,50 @@ namespace POAT
 {
     public partial class ProjetC : Form
     {
-        private int zoom = 1;
-        private Size originalSize;
+        private int zoom = 1;                       // Init du zoom
+        private Size originalSize;                  // Init taille pour pictures Box sauf comparaison
 
-        private string sourceImagesPath = "";
-        private string groundTruthsImagePath = "";
+        private string sourceImagesPath = "";       // Chemain pour les images à traités/brut
+        private string groundTruthsImagePath = "";  // Chemain pour les images ground truth
 
-        private int kernelSize = 3;
-        private string structElement = "disk";
+        private int kernelSize;                     // Init de la variable de la taille de l'element structurant
+        private string structElement;               // Init de la variable de la forme de l'element structurant
 
         public ProjetC()
         {
             InitializeComponent();
-            originalSize = new Size(image_db.Width, image_db.Height);
-            arrièreToolStripMenuItem.Enabled = false;
+            originalSize = new Size(image_db.Width, image_db.Height);   // Sauvegarde de la taille d'origine des pictures Box
+            arrièreToolStripMenuItem.Enabled = false;                   // Desactivation du bouton zoom arriere (taille image par defaut)             
         }
 
+        // Fonction utiliser pour bouton reset du menu et lors du changement de l'image
         private void reset()
         {
-            // Remise � z�ro des images
+            // Remise a zero des images
             image_db.Image = null;
             image_gt.Image = null;
             image_traitee.Image = null;
             img_comparaison.Image = null;
 
-            //remise � z�ro des labels
+            // Remise a zero des labels
             iou_label.Text = "Iou : ";
             vinet_label.Text = "Vinet : ";
         }
 
+        // Fonction pour ajouter les 2 types d'images (In et Sc) dans le node Tree
         private void AjouterNoeudsLnSn()
         {
-            var noeud_ln = new TreeNode("In");
-            var noeud_sn = new TreeNode("Sc");
+            var noeud_ln = new TreeNode("In"); // init du noeud In
+            var noeud_sn = new TreeNode("Sc"); // init du noeud Sc
 
-            // Trie et groupe les cl�s de ImageList par pr�fixe
+            // Trie et groupe les cles de ImageList par pr�fixe
             var groupedKeys = In_Sc_list.Images.Keys.Cast<string>()
                                    .Select(key => new { Key = key, FileName = Path.GetFileNameWithoutExtension(key) })
                                    .OrderBy(item => int.Parse(item.FileName.Substring(3)))
                                    .GroupBy(item => item.FileName.StartsWith("In_"))
                                    .ToList();
 
-            // Ajoute les n�uds enfants � leur noeud parent appropri�
+            // Ajoute les noeuds enfants a leur noeud parent approprie
             foreach (var group in groupedKeys)
             {
                 var parent = group.Key ? noeud_ln : noeud_sn;
@@ -74,48 +76,51 @@ namespace POAT
             treeView_in_sc.Nodes.AddRange(new[] { noeud_ln, noeud_sn });
         }
 
+        // Fonction utiliser pour faire le traitement de l'image
         private async void processImage()
         {
+            // Init du formulaire de la progressForm
             using (var progressForm = new ProgressForm(this))
             {
+                this.Enabled = false; // Descative le formulaire en attendant la fin du traitement
+                progressForm.Show();  // Afficher le formulaire progressForm
 
-                this.Enabled = false;
-                progressForm.Show();
-
+                // Init d'une fonction dans la fonction sous forme de tache pour le traitement
                 var (processedImage, groundTruthImage, iouValue, vinetValue) = await Task.Run(() =>
                 {
-                    Bitmap bmp = new Bitmap(image_db.Image);
-                    Bitmap bmpGt = new Bitmap(image_gt.Image);
-                    ClImage Img = new ClImage();
-                    ClImage ImgGT = new ClImage();
+                    Bitmap bmp = new Bitmap(image_db.Image);    // Init de l'image a traiter
+                    Bitmap bmpGt = new Bitmap(image_gt.Image);  // Init de l'image ground truth
+                    ClImage Img = new ClImage();                // Init d'une variable ClImage pour l'image à traiter
+                    ClImage ImgGT = new ClImage();              // Init d'une variable ClImage pour l'image ground truth
 
-                    var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                    var bmpDataGt = bmpGt.LockBits(new Rectangle(0, 0, bmpGt.Width, bmpGt.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);            // blocage des pixels de l'image 
+                    var bmpDataGt = bmpGt.LockBits(new Rectangle(0, 0, bmpGt.Width, bmpGt.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);    // blocage des pixels de l'image 
 
-                    progressForm.SetProgress(98);
+                    progressForm.SetProgress(98);   // Afficher notre progessbar à 98%
 
-                    Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-                    Img.processPtr(ImgGT.objetLibDataImgPtr(0, bmpDataGt.Scan0, bmpDataGt.Stride, bmpGt.Height, bmpGt.Width));
+                    Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width); // Partie init : utilisation de la fonction qui envoie les donnees à notre fonction/methode en csharp
+                    Img.processPtr(ImgGT.objetLibDataImgPtr(0, bmpDataGt.Scan0, bmpDataGt.Stride, bmpGt.Height, bmpGt.Width)); // Partie process : utilisation de la fonction qui envoie les donnees à notre fonction/methode en csharp
 
-                    progressForm.SetProgress(100);
+                    progressForm.SetProgress(100);  // Afficher notre progessbar à 100%
 
-                    bmp.UnlockBits(bmpData);
-                    bmpGt.UnlockBits(bmpDataGt);
-                    
-                    double iou = Img.objetLibValeurChamp(0);
-                    double vinet = Img.objetLibValeurChamp(1);
+                    bmp.UnlockBits(bmpData);        // Déverrouillage des pixels de l'image
+                    bmpGt.UnlockBits(bmpDataGt);    // Déverrouillage des pixels de l'image
+
+                    double iou = Img.objetLibValeurChamp(0);    // Partie du champs attribue à l'Iou
+                    double vinet = Img.objetLibValeurChamp(1);  // Partie du champs attribue à Vinet
 
                     return (bmp, bmpGt, iou, vinet);
 
                 });
 
+                // Affichage des donnes de notre traitement
                 iou_label.Text = $"Iou :  {iouValue} %";
                 vinet_label.Text = $"Vinet :  {vinetValue} %";
                 image_traitee.Image = processedImage;
                 img_comparaison.Image = groundTruthImage;
 
-                this.Enabled = true;
-                progressForm.CloseForm();
+                this.Enabled = true;        // Reactive le formulaire
+                progressForm.CloseForm();   // Fermeture du formulaire progressForm
             }
         } 
 
@@ -138,7 +143,7 @@ namespace POAT
                         // Obtenez juste le nom du fichier sans le chemin
                         string fileName = Path.GetFileName(filePath);
 
-                        // Ajoutez l'image � l'ImageList Ln_Sc
+                        // Ajoutez l'image a l'ImageList Ln_Sc
                         In_Sc_list.Images.Add(fileName, Image.FromFile(filePath));
                     }
                     AjouterNoeudsLnSn();
@@ -182,10 +187,13 @@ namespace POAT
 
         private void filterDialog()
         {
+            // Init du formulaire Filter
             using (Filter formFilter = new Filter())
             {
+                // Attente du signal avant extraction image
                 if (formFilter.ShowDialog() == DialogResult.OK)
                 {
+                    // Extraction des parametres entrees par l'utilisateur
                     kernelSize = formFilter.getKernelSize();
                     structElement = formFilter.getStrElement();
                 }
@@ -193,36 +201,36 @@ namespace POAT
 
         }
 
+        // appliquer le filtrage en fonction du choix de l'utilisateur
         private void filter(String methode)
         {
             if (treeView_in_sc.SelectedNode != null)
             {
-                // Appel du Form Filter
-                filterDialog();
+                filterDialog(); // Affichage du formulaire Filter
 
                 if (image_db.Image != null)
                 {
                     Bitmap processedImage = Task.Run(() =>
                     {
-                        Bitmap bmp = new Bitmap(image_db.Image);
-                        ClImage Img = new ClImage();
+                        Bitmap bmp = new Bitmap(image_db.Image);    // init d'une image bmp
+                        ClImage Img = new ClImage();                // init d'une ClImage   
 
                         unsafe
                         {
-                            var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                            Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-                            // a changer pour choisir le type d'�l�ment struct
+                            var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb); // Blocage des pixels de l'image 
+                            Img.objetLibDataImgPtr(2, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width); // Partie init : utilisation de la fonction qui envoie les donnees à notre fonction/methode en csharp
+                            // a changer pour choisir le type d'element struct
                             Img.filterPtr(kernelSize, methode, structElement);
 
-                            bmp.UnlockBits(bmpData);
+                            bmp.UnlockBits(bmpData); // Deblocage des pixels de l'image 
                         }
 
                         return bmp;
                     }).Result;
 
-                    image_db.Image = processedImage;
+                    image_db.Image = processedImage; // Affiche l'image dans la picture Box
                 }
-                processImage();
+                processImage(); // Lancemant du traitement
             }
 
         }
@@ -230,27 +238,31 @@ namespace POAT
 
         private void moyenToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            filter("moyen");
+            filter("moyen"); // L'utilisateur a choisit le filtre moyen
         }
 
 
         private void medianToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            filter("median");
+            filter("median"); // L'utilisateur a choisit le filtre median
         }
 
+        // Actualiser les pictures Box
         private void refreshImages()
         {
-            image_db.Refresh();
-            image_gt.Refresh();
+            // Actualise l'image
+            image_db.Refresh(); 
+            image_gt.Refresh(); 
 
+            // Image dans pictureBox init
             image_traitee.Image = null;
             img_comparaison.Image = null;
 
-            //remise � z�ro des labels
+            // Remise � z�ro des labels
             iou_label.Text = "Iou : ";
             vinet_label.Text = "Vinet : ";
 
+            // Lancement du traitement par la fonction
             processImage();
         }
 
@@ -281,6 +293,7 @@ namespace POAT
 
         private void resetToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // 
             TreeNode selectedNode = treeView_in_sc.SelectedNode;
             if (selectedNode != null)
             {

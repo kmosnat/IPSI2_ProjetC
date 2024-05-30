@@ -74,7 +74,7 @@
             // 
             image_db.BorderStyle = BorderStyle.FixedSingle;
             image_db.Location = new Point(2, 2);
-            image_db.Margin = new Padding(2, 2, 2, 2);
+            image_db.Margin = new Padding(2);
             image_db.Name = "image_db";
             image_db.Size = new Size(291, 281);
             image_db.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -103,7 +103,7 @@
             // 
             image_gt.BorderStyle = BorderStyle.FixedSingle;
             image_gt.Location = new Point(2, 2);
-            image_gt.Margin = new Padding(2, 2, 2, 2);
+            image_gt.Margin = new Padding(2);
             image_gt.Name = "image_gt";
             image_gt.Size = new Size(291, 281);
             image_gt.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -114,7 +114,7 @@
             // 
             image_traitee.BorderStyle = BorderStyle.FixedSingle;
             image_traitee.Location = new Point(2, 0);
-            image_traitee.Margin = new Padding(2, 2, 2, 2);
+            image_traitee.Margin = new Padding(2);
             image_traitee.Name = "image_traitee";
             image_traitee.Size = new Size(291, 281);
             image_traitee.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -240,7 +240,7 @@
             // 
             img_comparaison.BorderStyle = BorderStyle.FixedSingle;
             img_comparaison.Location = new Point(2, 2);
-            img_comparaison.Margin = new Padding(2, 2, 2, 2);
+            img_comparaison.Margin = new Padding(2);
             img_comparaison.Name = "img_comparaison";
             img_comparaison.Size = new Size(217, 201);
             img_comparaison.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -340,7 +340,7 @@
             Controls.Add(menuStrip1);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MainMenuStrip = menuStrip1;
-            Margin = new Padding(2, 2, 2, 2);
+            Margin = new Padding(2);
             MaximizeBox = false;
             Name = "ProjetC";
             Text = "Projet C++";

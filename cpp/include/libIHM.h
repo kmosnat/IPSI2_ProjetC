@@ -9,6 +9,7 @@
 #include <thread>
 #include <vector>
 
+// Enumération des couleurs
 enum class COULEUR
 {
 	RVB,
@@ -39,9 +40,10 @@ public:
 	///////////////////////////////////////
 
 	// constructeurs
-	_declspec(dllexport) ClibIHM(); // par d�faut
+	_declspec(dllexport) ClibIHM(); // Initialisateur par défaut
 
-	_declspec(dllexport) ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol); // par image format bmp C#
+    // Initialisateur par valeurs
+	_declspec(dllexport) ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol);
 
 	_declspec(dllexport) ~ClibIHM();
 
@@ -78,30 +80,37 @@ public:
 	_declspec(dllexport) void persitData(CImageNdg* pImg, COULEUR couleur);
 };
 
+
+// Fonctions d'exportation
+// Pour créer un objet de la classe ClibIHM sans paramètres
 extern "C" _declspec(dllexport) ClibIHM* objetLib()
 {
 	ClibIHM* pImg = new ClibIHM();
 	return pImg;
 }
 
+// Pour créer un objet de la classe ClibIHM avec paramètres
 extern "C" _declspec(dllexport) ClibIHM* objetLibDataImg(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 {
 	ClibIHM* pImg = new ClibIHM(nbChamps, data, stride, nbLig, nbCol);
 	return pImg;
 }
 
+// Pour filtrer une image
 extern "C" _declspec(dllexport) ClibIHM * filter(ClibIHM* pImg, int kernel, char* methode, char* str)
 {
 	pImg->filter(methode, kernel, str);
 	return pImg;
 }
 
+// Pour traiter une image
 extern "C" _declspec(dllexport) ClibIHM* process(ClibIHM* pImg, ClibIHM* pImgGt)
 {
 	pImg->runProcess(pImgGt);
 	return pImgGt;
 }
 
+// Pour accéder à la valeur d'un champ
 extern "C" _declspec(dllexport) double valeurChamp(ClibIHM* pImg, int i)
 {
 	return pImg->lireChamp(i);

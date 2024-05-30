@@ -291,9 +291,9 @@ namespace POAT
             }
         }
 
+        // Fonction pour revennir a l'image d'origine
         private void resetToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // 
             TreeNode selectedNode = treeView_in_sc.SelectedNode;
             if (selectedNode != null)
             {
@@ -323,16 +323,19 @@ namespace POAT
 
         }
 
+        // Fonction pour faire un zoom avant
         private void avantToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ZoomImage(2);
         }
 
+        // Fonction pour faire un zoom arriere
         private void arrièreToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ZoomImage(0.5);
         }
 
+        // Fonction pour zoomer l'image
         private void ZoomImage(double scaleFactor)
         {
             if (treeView_in_sc.SelectedNode != null)
@@ -352,16 +355,19 @@ namespace POAT
             }
         }
 
+        // Fonction pour ajuster la taille de l'image
         private void AdjustImageSize(PictureBox pictureBox, int zoomLevel)
         {
             pictureBox.Size = new Size(originalSize.Width * zoomLevel, originalSize.Height * zoomLevel);
         }
 
+        // Fonction pour ajuster la position de l'image
         private void panel1_Scroll(object sender, ScrollEventArgs e)
         {
             AdjustImagePosition();
         }
 
+        // Fonction pour ajuster la position de l'image
         private void AdjustImagePosition()
         {
             int scrollValue_v = panel1.VerticalScroll.Value;
@@ -372,6 +378,7 @@ namespace POAT
             SetImagePosition(image_traitee, scrollValue_h, scrollValue_v);
         }
 
+        // Fonction pour positionner l'image
         private void SetImagePosition(PictureBox image, int scrollValue_h, int scrollValue_v)
         {
             image.Top = -scrollValue_v;

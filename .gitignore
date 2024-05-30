@@ -360,3 +360,5 @@ ipsi.txt
 
 results/
 /.vs/
+/POAT/obj/*
+/POAT/bin/*

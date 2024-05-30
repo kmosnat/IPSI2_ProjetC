@@ -25,6 +25,7 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 		throw std::invalid_argument("Aucune Data");
 	}
 
+    // Initialisation des variables
 	nbDataImg = nbChamps;
 	dataFromImg.resize(nbChamps);
 	this->data = data;
@@ -32,13 +33,16 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 	this->NbCol = nbCol;
 	this->stride = stride;
 
+    // Initialisation des images
 	imgPt = new CImageCouleur(nbLig, nbCol);
 	imgNdgPt = new CImageNdg(nbLig, nbCol);
 
+    // Vérification de l'allocation
 	if (!imgPt) {
 		throw std::runtime_error("Erreur allocation CImageCouleur");
 	}
 
+    // Récupération des valeurs des pixels
 	byte* pixPtr = this->data;
 
 	for (int y = 0; y < nbLig; y++)
@@ -53,12 +57,13 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 			// Conversion en niveau de gris
 			imgNdgPt->operator()(y, x) = (int)(0.299 * pixPtr[3 * x] + 0.587 * pixPtr[3 * x + 1] + 0.114 * pixPtr[3 * x + 2]);
 		}
+
 		pixPtr += stride;
 	}
 
 }
 
-// Recuperer les valeurs pixels de l'image de la classe CImageNdg pour une image de la classe ClibIHM
+// Copie d'une image de la classe CImageNdg à une image pointeur ClibIHM
 void ClibIHM::copyImage(CImageNdg img)
 {
 	for (int y = 0; y < NbLig; y++)
@@ -70,7 +75,7 @@ void ClibIHM::copyImage(CImageNdg img)
 	}
 }
 
-// Ecrire une image de la classe CImageCouleur à partir d'une image pointeur ClibIHM
+// Ecriture de l'image
 void ClibIHM::writeImage(ClibIHM* img, CImageCouleur out)
 {
 	// Ecriture de l'image
@@ -87,7 +92,7 @@ void ClibIHM::writeImage(ClibIHM* img, CImageCouleur out)
 	}
 }
 
-// Pour binariser une image de la classe CImageNdg en vrai binaire pour la classe ClibIHM
+// Pour écrire une image binaire de la classe CImageNdg en image de la classe ClibIHM
 void ClibIHM::writeBinaryImage(CImageNdg img)
 {
 	for (int y = 0; y < NbLig; y++)
@@ -198,13 +203,14 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 
 	this->writeBinaryImage(trueRes);
 
+    // Calcul du score et comparaison
 	this->score(pImgGt);
 	this->compare(pImgGt);
 
 	this->persitData(this->imgNdgPt, COULEUR::RVB);
 }
 
-// Compare l'image traitee et la ground truth pour afficher les ressemblance et les differences
+// Compare l'image traitee et la ground truth pour afficher les ressemblances et differences
 void ClibIHM::compare(ClibIHM* pImgGt)
 {
 	CImageCouleur out(NbLig, NbCol);
@@ -247,6 +253,7 @@ void ClibIHM::score(ClibIHM* pImgGt)
 	CImageNdg GT = pImgGt->toBinaire();
 	GT.ecrireBinaire(true);
 
+    // Création et démarrage des threads pour calculer les scores
 	std::thread th1([&] {
 
 		double score = img.indicateurPerformance(GT, "iou");
@@ -268,7 +275,7 @@ void ClibIHM::score(ClibIHM* pImgGt)
 	th2.join();
 }
 
-// Ecrire les pixels de l'image envoye selon le canaux choisit
+// Ecrire les pixels de l'image envoye selon le canal choisit
 void ClibIHM::persitData(CImageNdg* pImg, COULEUR color)
 {
 	CImageCouleur out(NbLig, NbCol);
@@ -315,3 +322,4 @@ ClibIHM::~ClibIHM() {
 		(*this->imgPt).~CImageCouleur(); 
 	this->dataFromImg.clear();
 }
+

@@ -20,6 +20,7 @@ namespace POAT
             this.parentForm.Move += ParentFormMoved;
         }
 
+        // Centrez le formulaire de progression par rapport au formulaire principal
         private void ParentFormMoved(object sender, EventArgs e)
         {
             CenterToParentForm(); 
@@ -34,6 +35,7 @@ namespace POAT
             );
         }
 
+        // Lorsque le formulaire de progression est fermé, supprimez l'événement de déplacement du formulaire principal
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);

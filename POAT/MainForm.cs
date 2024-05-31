@@ -119,6 +119,15 @@ namespace POAT
                 image_traitee.Image = processedImage;
                 img_comparaison.Image = groundTruthImage;
 
+                // Changer la couleur du texte en fonction de la valeur
+                vinet_label.ForeColor = (vinetValue >= 70) ? Color.Green :
+                                        (vinetValue >= 50) ? Color.Orange :
+                                                             Color.Red;
+
+                iou_label.ForeColor = (iouValue >= 70) ? Color.Green :
+                                      (iouValue >= 50) ? Color.Orange :
+                                                         Color.Red;
+
                 this.Enabled = true;        // Reactive le formulaire
                 progressForm.CloseForm();   // Fermeture du formulaire progressForm
             }

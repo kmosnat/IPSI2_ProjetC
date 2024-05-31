@@ -20,9 +20,10 @@ namespace POAT
             this.parentForm.Move += ParentFormMoved;
         }
 
+        // Centrez le formulaire de progression par rapport au formulaire principal
         private void ParentFormMoved(object sender, EventArgs e)
         {
-            CenterToParentForm(); // Réajustez la position chaque fois que le formulaire principal se déplace
+            CenterToParentForm(); 
         }
 
         private void CenterToParentForm()
@@ -34,12 +35,14 @@ namespace POAT
             );
         }
 
+        // Lorsque le formulaire de progression est fermé, supprimez l'événement de déplacement du formulaire principal
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
             this.parentForm.Move -= ParentFormMoved;
         }
 
+        // Set la valeur de la ProgressBar
         public void SetProgress(int progress)
         {
             if (this.progressBar.InvokeRequired)
@@ -52,6 +55,7 @@ namespace POAT
             }
         }
 
+        // Fermer le formulaire ProgressForm
         public void CloseForm()
         {
             if (this.InvokeRequired)

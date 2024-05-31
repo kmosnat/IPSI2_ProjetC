@@ -10,6 +10,7 @@
 
 #include "libIHM.h"
 
+// Initialisateur par défaut
 ClibIHM::ClibIHM() {
 
 	this->nbDataImg = 0;
@@ -17,12 +18,14 @@ ClibIHM::ClibIHM() {
 	this->imgPt = NULL;
 }
 
+// Initialisateur par valeurs
 ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 {
 	if (data == nullptr) {
 		throw std::invalid_argument("Aucune Data");
 	}
 
+    // Initialisation des variables
 	nbDataImg = nbChamps;
 	dataFromImg.resize(nbChamps);
 	this->data = data;
@@ -30,19 +33,23 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 	this->NbCol = nbCol;
 	this->stride = stride;
 
+    // Initialisation des images
 	imgPt = new CImageCouleur(nbLig, nbCol);
 	imgNdgPt = new CImageNdg(nbLig, nbCol);
+
+    // Vérification de l'allocation
 	if (!imgPt) {
 		throw std::runtime_error("Erreur allocation CImageCouleur");
 	}
 
+    // Récupération des valeurs des pixels
 	byte* pixPtr = this->data;
 
 	for (int y = 0; y < nbLig; y++)
 	{
 		for (int x = 0; x < nbCol; x++)
 		{
-			// R�cup�ration des valeurs RGB
+			// R�cup�ration des valeurs RGB
 			imgPt->operator()(y, x)[0] = pixPtr[3 * x + 2]; // Bleu
 			imgPt->operator()(y, x)[1] = pixPtr[3 * x + 1]; // Vert
 			imgPt->operator()(y, x)[2] = pixPtr[3 * x];     // Rouge
@@ -50,15 +57,13 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 			// Conversion en niveau de gris
 			imgNdgPt->operator()(y, x) = (int)(0.299 * pixPtr[3 * x] + 0.587 * pixPtr[3 * x + 1] + 0.114 * pixPtr[3 * x + 2]);
 		}
+
 		pixPtr += stride;
 	}
 
-	if (!imgNdgPt) {
-		delete imgPt;
-		throw std::runtime_error("Erreur allocation CImageNdg");
-	}
 }
 
+// Copie d'une image de la classe CImageNdg à une image pointeur ClibIHM
 void ClibIHM::copyImage(CImageNdg img)
 {
 	for (int y = 0; y < NbLig; y++)
@@ -70,6 +75,7 @@ void ClibIHM::copyImage(CImageNdg img)
 	}
 }
 
+// Ecriture de l'image
 void ClibIHM::writeImage(ClibIHM* img, CImageCouleur out)
 {
 	// Ecriture de l'image
@@ -86,6 +92,7 @@ void ClibIHM::writeImage(ClibIHM* img, CImageCouleur out)
 	}
 }
 
+// Pour écrire une image binaire de la classe CImageNdg en image de la classe ClibIHM
 void ClibIHM::writeBinaryImage(CImageNdg img)
 {
 	for (int y = 0; y < NbLig; y++)
@@ -104,6 +111,7 @@ void ClibIHM::writeBinaryImage(CImageNdg img)
 	}
 }
 
+// Pour binariser une image de la classe ClibIHM en vrai binaire pour la classe CImageNdg
 CImageNdg ClibIHM::toBinaire()
 {
 	CImageNdg imgNdg(NbLig, NbCol);
@@ -124,20 +132,22 @@ CImageNdg ClibIHM::toBinaire()
 	return imgNdg;
 }
 
-void ClibIHM::filter(std::string methode, int kernel)
+// Filtrage de l'image en fonction des paramètres appliqués
+void ClibIHM::filter(std::string methode, int kernel, std::string str)
 {
 	if (methode == "moyen")
 	{
-		this->copyImage(this->imgNdgPt->filtrage("moyennage", kernel, kernel));
+		this->copyImage(this->imgNdgPt->filtrage("moyennage", kernel, kernel, str));
 	}
 	else if (methode == "median")
 	{
-		this->copyImage(this->imgNdgPt->filtrage("median", kernel, kernel));
+		this->copyImage(this->imgNdgPt->filtrage("median", kernel, kernel, str));
 	}
 
 	this->persitData(this->imgNdgPt, COULEUR::RVB);
 }
 
+// Traitement de l'image
 void ClibIHM::runProcess(ClibIHM* pImgGt)
 {
 	int seuilBas = 0;
@@ -145,7 +155,10 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 
 	CImageNdg inv_whiteTopHat, whiteTopHat;
 
-	// Cr�ation et d�marrage des threads pour calculer whiteTopHat et inv_whiteTopHat
+	//filtre median
+	this->filter("median", 3, "V8");
+
+	// Cr�ation et d�marrage des threads pour calculer whiteTopHat et inv_whiteTopHat
 	std::thread th1([&] {
 		inv_whiteTopHat = this->imgNdgPt->transformation().whiteTopHat("disk", 17);
 		});
@@ -159,7 +172,7 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 
 	CImageNdg inv_seuil, seuil;
 
-	// Utilisation des r�sultats dans de nouveaux threads
+	// Utilisation des r�sultats dans de nouveaux threads
 	std::thread th3([&] {
 		inv_seuil = inv_whiteTopHat.seuillage("otsu", seuilBas, seuilHaut).morphologie("erosion", "V8", 9).morphologie("dilatation", "V8", 9);
 		});
@@ -171,24 +184,33 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 	th3.join();
 	th4.join();
 
+	CImageNdg res;
 	CImageNdg GT = pImgGt->toBinaire();
+
 
 	if (inv_seuil.correlation(GT) > seuil.correlation(GT))
 	{
-		this->writeBinaryImage(inv_seuil);
+		res = inv_seuil;
 	}
 	else
 	{
-		this->writeBinaryImage(seuil);
+		res = seuil;
 	}
 
+	CImageClasse imgClasse = CImageClasse(res, "V8");
+	CImageClasse filtre = imgClasse.filtrage("taille", 30, 10000, false);
+	CImageNdg trueRes = filtre.toNdg();
+
+	this->writeBinaryImage(trueRes);
+
+    // Calcul du score et comparaison
 	this->score(pImgGt);
 	this->compare(pImgGt);
 
 	this->persitData(this->imgNdgPt, COULEUR::RVB);
 }
 
-
+// Compare l'image traitee et la ground truth pour afficher les ressemblances et differences
 void ClibIHM::compare(ClibIHM* pImgGt)
 {
 	CImageCouleur out(NbLig, NbCol);
@@ -222,74 +244,30 @@ void ClibIHM::compare(ClibIHM* pImgGt)
 	writeImage(pImgGt, out);
 }
 
+// Calcul du score en fonction de la ground truth
 void ClibIHM::score(ClibIHM* pImgGt)
 {
 	// Score IOU
 	CImageNdg img = this->toBinaire();
+	img.ecrireBinaire(true);
 	CImageNdg GT = pImgGt->toBinaire();
+	GT.ecrireBinaire(true);
 
+    // Création et démarrage des threads pour calculer les scores
 	std::thread th1([&] {
-		int intersection = 0;
-		int union_ = 0;
 
-		for (int y = 0; y < NbLig; y++)
-		{
-			for (int x = 0; x < NbCol; x++)
-			{
-				if (img(y, x) == 1 && GT(y, x) == 1)
-				{
-					intersection++;
-				}
-				if (img(y, x) == 1 || GT(y, x) == 1)
-				{
-					union_++;
-				}
-			}
-		}
-		this->dataFromImg.at(0) = floor(((double)intersection / (double)union_) * 10000) / 100;
+		double score = img.indicateurPerformance(GT, "iou");
+
+		this->dataFromImg.at(0) = floor(score * 10000) / 100;
 	});
 
 	std::thread th2([&] {
 		// Score de Vinet
-		std::vector<SIGNATURE_Forme> st, sr;
+		CImageClasse imgClasse(img, "V8");
 
-		CImageClasse lab(img, "V8");
-		CImageClasse labGT(GT, "V8");
+		double score = imgClasse.vinet(img, GT);
 
-		st = lab.signatures();
-		sr = labGT.signatures();
-
-		int nt = st.size(), nr = sr.size();
-		int nm = min(nt, nr);
-		float totalArea = 0.0f, score = 0.0f;
-
-		for (int i = 0; i < nm; i++) {
-			SIGNATURE_Forme* bestchoice = &sr[0];
-			float minDis = distanceSQ(st[i], *bestchoice);
-
-			for (int j = 1; j < nr; j++) {
-				float currentDis = distanceSQ(st[i], sr[j]);
-				if (currentDis < minDis && sr[j].surface == st[i].surface) {
-					bestchoice = &sr[j];
-					minDis = currentDis;
-				}
-			}
-
-			SIGNATURE_Forme compareRegion = *bestchoice;
-			totalArea += st[i].rectEnglob_Hi * st[i].rectEnglob_Hj;
-			score += distanceSQ(st[i], compareRegion);
-		}
-
-		for (int i = nm; i < max(nt, nr); i++) {
-			if (i < nr) {
-				totalArea += sr[i].rectEnglob_Hi * sr[i].rectEnglob_Hj;
-			}
-			if (i < nt) {
-				totalArea += st[i].rectEnglob_Hi * st[i].rectEnglob_Hj;
-			}
-		}
-
-		this->dataFromImg.at(1) = floor((score / totalArea * 10000) / 100);
+		this->dataFromImg.at(1) = floor(score * 10000) / 100;
 	
 	});
 	
@@ -297,7 +275,7 @@ void ClibIHM::score(ClibIHM* pImgGt)
 	th2.join();
 }
 
-
+// Ecrire les pixels de l'image envoye selon le canal choisit
 void ClibIHM::persitData(CImageNdg* pImg, COULEUR color)
 {
 	CImageCouleur out(NbLig, NbCol);
@@ -337,10 +315,11 @@ void ClibIHM::persitData(CImageNdg* pImg, COULEUR color)
 	writeImage(this, out);
 }
 
-
+// Destructeur
 ClibIHM::~ClibIHM() {
 	
 	if (imgPt)
 		(*this->imgPt).~CImageCouleur(); 
 	this->dataFromImg.clear();
 }
+

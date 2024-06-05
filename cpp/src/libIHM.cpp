@@ -188,7 +188,7 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 	CImageNdg GT = pImgGt->toBinaire();
 
 
-	if (inv_seuil.correlation(GT) > seuil.correlation(GT))
+	if (fabs(inv_seuil.correlation(GT)) > fabs(seuil.correlation(GT)))
 	{
 		res = inv_seuil;
 	}
@@ -196,6 +196,7 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
 	{
 		res = seuil;
 	}
+
 
 	CImageClasse imgClasse = CImageClasse(res, "V8");
 	CImageClasse filtre = imgClasse.filtrage("taille", 30, 10000, false);
@@ -206,6 +207,7 @@ void ClibIHM::runProcess(ClibIHM* pImgGt)
     // Calcul du score et comparaison
 	this->score(pImgGt);
 	this->compare(pImgGt);
+
 
 	this->persitData(this->imgNdgPt, COULEUR::RVB);
 }
